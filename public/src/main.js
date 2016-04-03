@@ -4,6 +4,6 @@ var App = require('./components/app')
 
 
 ReactDOM.render(
-  <App />,
+  <App name={"Josh"} />,
   document.getElementById('content')
 )

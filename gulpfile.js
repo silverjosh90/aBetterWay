@@ -68,24 +68,7 @@ gulp.task('css', function() {
 		.pipe(gulp.dest(config.paths.dist + '/css'));
 });
 
-gulp.task('jest', function () {
-    return gulp.src('__tests__').pipe(jest({
-        scriptPreprocessor: "./spec/support/preprocessor.js",
-        unmockedModulePathPatterns: [
-            "node_modules/react"
-        ],
-        testDirectoryName: "spec",
-        testPathIgnorePatterns: [
-            "node_modules",
-            "spec/support"
-        ],
-        moduleFileExtensions: [
-            "js",
-            "json",
-            "react"
-        ]
-    }));
-});
+
 
 gulp.task('lint', function(){
   return gulp.src(config.paths.js)
@@ -98,4 +81,4 @@ gulp.task('watch', function() {
   gulp.watch(config.paths.js, ['js', 'lint'])
 })
 
-gulp.task('default', ['html', 'jest', 'lint', 'images', 'js', 'css', 'open', 'watch']);
+gulp.task('default', ['html', 'lint', 'images', 'js', 'css', 'open', 'watch']);
