@@ -1,9 +1,9 @@
-var App = require('./components/app')
+var routes = require('./routes')
 
 
 
 
 ReactDOM.render(
-  <App name={"Josh"} />,
+  routes,
   document.getElementById('content')
 )
