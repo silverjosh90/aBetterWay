@@ -1,97 +1,123 @@
-var Link = require('react-router').Link
+var PropTypes = require('react').PropTypes
+var FacebookLogin =  React.createClass({
+
+responseFacebook: function(response) {
+    console.log(response);
+  },
+
+  propTypes: {
+
+    xfbml: PropTypes.bool,
+    cookie: PropTypes.bool,
+    scope: PropTypes.string,
+    textButton: PropTypes.string,
+    autoLoad: PropTypes.bool,
+    size: PropTypes.string,
+    fields: PropTypes.string,
+    cssClass: PropTypes.string,
+    version: PropTypes.string,
+    icon: PropTypes.string,
+    language: PropTypes.string,
+  },
+
+  defaultProps: {
+    textButton: 'Login with Facebook',
+    scope: 'public_profile, email',
+    xfbml: false,
+    cookie: false,
+    size: 'metro',
+    fields: ['name', "picture.width(400).height(400)"],
+    cssClass: 'kep-login-facebook',
+    version: '2.3',
+    language: 'en_US',
+  },
+
+  componentDidMount() {
+    let fbRoot = document.createElement('div');
+        fbRoot.id = 'fb-root';
+
+    document.body.appendChild(fbRoot);
+
+    window.fbAsyncInit = function() {
+      FB.init({
+        appId: 249945812017045,
+        xfbml: true,
+        cookie: false,
+        version: 'v2.5',
+      });
+
+      if (true) {
+        FB.getLoginStatus(this.checkLoginState);
+      }
+    }
+
+    // Load the SDK asynchronously
+    window.fbAsyncInit = function() {
+      FB.init({
+        appId      : '249945812017045',
+        xfbml      : true,
+        version    : 'v2.5'
+      });
+    };
+
+    (function(d, s, id){
+       var js, fjs = d.getElementsByTagName(s)[0];
+       if (d.getElementById(id)) {return;}
+       js = d.createElement(s); js.id = id;
+       js.src = "//connect.facebook.net/en_US/sdk.js";
+       fjs.parentNode.insertBefore(js, fjs);
+     }(document, 'script', 'facebook-jssdk'));
+  },
 
 
-var Login = React.createClass({
-  componentDidMount: function() {
-  window.fbAsyncInit = function() {
-    FB.init({
-      appId      : '249945812017045',
-      cookie     : true,  // enable cookies to allow the server to access
-                        // the session
-      xfbml      : true,  // parse social plugins on this page
-      version    : 'v2.1' // use version 2.1
+
+  responseApi: function(authResponse){
+    FB.api('/me', { fields: this.props.fields }, (me) => {
+      me.accessToken = authResponse.accessToken;
+      this.responseFacebook(me);
     });
+  },
 
-    // Now that we've initialized the JavaScript SDK, we call
-    // FB.getLoginStatus().  This function gets the state of the
-    // person visiting this page and can return one of three states to
-    // the callback you provide.  They can be:
-    //
-    // 1. Logged into your app ('connected')
-    // 2. Logged into Facebook, but not your app ('not_authorized')
-    // 3. Not logged into Facebook and can't tell if they are logged into
-    //    your app or not.
-    //
-    // These three cases are handled in the callback function.
-    FB.getLoginStatus(function(response) {
-      this.statusChangeCallback(response);
-    }.bind(this));
-  }.bind(this);
+  checkLoginState: function(response){
+    if (response.authResponse) {
+      this.responseApi(response.authResponse);
+    } else {
+      if (this.responseFacebook) {
+        this.responseFacebook({ status: response.status });
+      }
+    }
+  },
 
-  // Load the SDK asynchronously
-  (function(d, s, id) {
-    var js, fjs = d.getElementsByTagName(s)[0];
-    if (d.getElementById(id)) return;
-    js = d.createElement(s); js.id = id;
-    js.src = "//connect.facebook.net/en_US/sdk.js";
-    fjs.parentNode.insertBefore(js, fjs);
-  }(document, 'script', 'facebook-jssdk'));
-},
+  click: function(){
+    FB.login(this.checkLoginState, { scope: this.props.scope });
+  },
 
-// Here we run a very simple test of the Graph API after login is
-// successful.  See statusChangeCallback() for when this call is made.
-testAPI: function() {
-  console.log('Welcome!  Fetching your information.... ');
-  FB.api('/me', function(response) {
-  console.log(response.name)
-  });
-},
-
-// This is called with the results from from FB.getLoginStatus().
-statusChangeCallback: function(response) {
-  console.log('statusChangeCallback');
-  console.log(response);
-  // The response object is returned with a status field that lets the
-  // app know the current login status of the person.
-  // Full docs on the response object can be found in the documentation
-  // for FB.getLoginStatus().
-  if (response.status === 'connected') {
-    // Logged into your app and Facebook.
-    this.testAPI();
-  } else if (response.status === 'not_authorized') {
-    // The person is logged into Facebook, but not your app.
-    document.getElementById('status').innerHTML = 'Please log ' +
-      'into this app.';
-  } else {
-    // The person is not logged into Facebook, so we're not sure if
-    // they are logged into this app or not.
-    document.getElementById('status').innerHTML = 'Please log ' +
-    'into Facebook.';
-  }
-},
-
-// This function is called when someone finishes with the Login
-// Button.  See the onlogin handler attached to it in the sample
-// code below.
-checkLoginState: function() {
-  FB.getLoginStatus(function(response) {
-    this.statusChangeCallback(response);
-  }.bind(this));
-},
-
-handleClick: function() {
-  FB.login(this.checkLoginState());
-},
-  render: function() {
-    return(
-
+  renderWithFontAwesome() {
+    return (
       <div>
-        {console.log('here')}
-        <h1> Login </h1>
-        <a onClick={this.handleClick}> Sign in with Facebook </a>
+         <button onClick={this.click}>
+         Login with facebook!
+         </button>
+
+
       </div>
     )
-  }
-})
+  },
 
-module.exports = Login
+  render() {
+    if (this.props.icon) {
+      return this.renderWithFontAwesome();
+    }
+
+    return (
+      <div>
+        <button onClick={this.click}>
+        Login with facebook!
+
+        </button>
+
+      </div>
+    );
+  }
+});
+module.exports = FacebookLogin;
