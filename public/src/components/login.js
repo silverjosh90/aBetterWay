@@ -1,8 +1,11 @@
 var PropTypes = require('react').PropTypes
+var Router = require('react-router')
+var hashHistory= Router.hashHistory
 var FacebookLogin =  React.createClass({
 
 responseFacebook: function(response) {
-    console.log(response);
+    console.log(response.picture);
+    hashHistory.push('/')
   },
 
   propTypes: {
@@ -20,17 +23,6 @@ responseFacebook: function(response) {
     language: PropTypes.string,
   },
 
-  defaultProps: {
-    textButton: 'Login with Facebook',
-    scope: 'public_profile, email',
-    xfbml: false,
-    cookie: false,
-    size: 'metro',
-    fields: ['name', "picture.width(400).height(400)"],
-    cssClass: 'kep-login-facebook',
-    version: '2.3',
-    language: 'en_US',
-  },
 
   componentDidMount() {
     let fbRoot = document.createElement('div');
@@ -72,7 +64,7 @@ responseFacebook: function(response) {
 
 
   responseApi: function(authResponse){
-    FB.api('/me', { fields: this.props.fields }, (me) => {
+    FB.api('/me', { fields: ['name', "picture.width(400).height(400)"] }, (me) => {
       me.accessToken = authResponse.accessToken;
       this.responseFacebook(me);
     });
@@ -89,20 +81,9 @@ responseFacebook: function(response) {
   },
 
   click: function(){
-    FB.login(this.checkLoginState, { scope: this.props.scope });
+    FB.login(this.checkLoginState, { scope: 'public_profile, email'});
   },
 
-  renderWithFontAwesome() {
-    return (
-      <div>
-         <button onClick={this.click}>
-         Login with facebook!
-         </button>
-
-
-      </div>
-    )
-  },
 
   render() {
     if (this.props.icon) {
