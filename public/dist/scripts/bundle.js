@@ -33743,17 +33743,22 @@ module.exports = warning;
 
 }).call(this,require('_process'))
 },{"_process":49}],216:[function(require,module,exports){
-"use strict";
 
 var $ = require('jquery')
 var jQuery = require('jquery');
 var React = require('react')
+var Link = require('react-router').Link
 
 var App = React.createClass({displayName: "App",
   render: function() {
     return (
-      React.createElement("div", null, 
-       React.createElement("h2", null, "El Derp")
+      React.createElement("div", {className: "derp"}, 
+        React.createElement("div", {className: "splashImg"}, 
+          React.createElement("div", {className: "blurBackground"}, 
+            React.createElement("h2", {className: "pageTitle"}, "The Road Ahead"), 
+            React.createElement(Link, {to: "login"}, React.createElement("button", {className: "btn btn-primary"}, " Learn More "))
+          )
+        )
        )
     )
   }
@@ -33762,7 +33767,123 @@ var App = React.createClass({displayName: "App",
 
 module.exports = App
 
-},{"jquery":48,"react":213}],217:[function(require,module,exports){
+},{"jquery":48,"react":213,"react-router":78}],217:[function(require,module,exports){
+var Link = require('react-router').Link
+
+var PageNotFound = React.createClass({displayName: "PageNotFound",
+  render: function() {
+    return (
+      React.createElement("div", null, 
+      console.log('getting Here'), 
+      React.createElement("h1", null, " Page not found! "), 
+      React.createElement(Link, {to: "/"}, " Go Home ")
+      )
+    )
+  }
+})
+
+module.exports = PageNotFound
+
+},{"react-router":78}],218:[function(require,module,exports){
+var Link = require('react-router').Link
+
+
+var Login = React.createClass({displayName: "Login",
+  componentDidMount: function() {
+  window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '249945812017045',
+      cookie     : true,  // enable cookies to allow the server to access
+                        // the session
+      xfbml      : true,  // parse social plugins on this page
+      version    : 'v2.1' // use version 2.1
+    });
+
+    // Now that we've initialized the JavaScript SDK, we call
+    // FB.getLoginStatus().  This function gets the state of the
+    // person visiting this page and can return one of three states to
+    // the callback you provide.  They can be:
+    //
+    // 1. Logged into your app ('connected')
+    // 2. Logged into Facebook, but not your app ('not_authorized')
+    // 3. Not logged into Facebook and can't tell if they are logged into
+    //    your app or not.
+    //
+    // These three cases are handled in the callback function.
+    FB.getLoginStatus(function(response) {
+      this.statusChangeCallback(response);
+    }.bind(this));
+  }.bind(this);
+
+  // Load the SDK asynchronously
+  (function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/en_US/sdk.js";
+    fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));
+},
+
+// Here we run a very simple test of the Graph API after login is
+// successful.  See statusChangeCallback() for when this call is made.
+testAPI: function() {
+  console.log('Welcome!  Fetching your information.... ');
+  FB.api('/me', function(response) {
+  console.log(response.name)
+  });
+},
+
+// This is called with the results from from FB.getLoginStatus().
+statusChangeCallback: function(response) {
+  console.log('statusChangeCallback');
+  console.log(response);
+  // The response object is returned with a status field that lets the
+  // app know the current login status of the person.
+  // Full docs on the response object can be found in the documentation
+  // for FB.getLoginStatus().
+  if (response.status === 'connected') {
+    // Logged into your app and Facebook.
+    this.testAPI();
+  } else if (response.status === 'not_authorized') {
+    // The person is logged into Facebook, but not your app.
+    document.getElementById('status').innerHTML = 'Please log ' +
+      'into this app.';
+  } else {
+    // The person is not logged into Facebook, so we're not sure if
+    // they are logged into this app or not.
+    document.getElementById('status').innerHTML = 'Please log ' +
+    'into Facebook.';
+  }
+},
+
+// This function is called when someone finishes with the Login
+// Button.  See the onlogin handler attached to it in the sample
+// code below.
+checkLoginState: function() {
+  FB.getLoginStatus(function(response) {
+    this.statusChangeCallback(response);
+  }.bind(this));
+},
+
+handleClick: function() {
+  FB.login(this.checkLoginState());
+},
+  render: function() {
+    return(
+
+      React.createElement("div", null, 
+        console.log('here'), 
+        React.createElement("h1", null, " Login "), 
+        React.createElement("a", {onClick: this.handleClick}, " Sign in with Facebook ")
+      )
+    )
+  }
+})
+
+module.exports = Login
+
+},{"react-router":78}],219:[function(require,module,exports){
 var routes = require('./routes')
 
 
@@ -33773,22 +33894,24 @@ ReactDOM.render(
   document.getElementById('content')
 )
 
-},{"./routes":218}],218:[function(require,module,exports){
+},{"./routes":220}],220:[function(require,module,exports){
 var Router = require('react-router').Router
-var Redirect = require('react-router').Redirect;
 var Route = require('react-router').Route;
 var hashHistory = require('react-router').hashHistory
 var App = require('./components/app')
+var PageNotFound = require('./components/common/pagenotfound')
+var Login = require('./components/login')
 
 
 var routes = (
   React.createElement(Router, {history: hashHistory}, 
-    React.createElement(Route, {path: "/", component: App}
-    )
+    React.createElement(Route, {path: "/", component: App}), 
+    React.createElement(Route, {path: "login", component: Login}), 
+    React.createElement(Route, {path: "*", component: PageNotFound})
   )
 );
 
 
 module.exports = routes;
 
-},{"./components/app":216,"react-router":78}]},{},[217]);
+},{"./components/app":216,"./components/common/pagenotfound":217,"./components/login":218,"react-router":78}]},{},[219]);

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1459785816356" clover="3.2.0">
-	<project timestamp="1459785816356"  name="All Files" >
-		<metrics statements="6"  coveredstatements="6"  conditionals="0"  coveredconditionals="0"  methods="1"  coveredmethods="1"  elements="7"  coveredelements="7"  complexity="0"  packages="1"  files="1"  classes="1"  loc="18"  ncloc="18" />
+<coverage generated="1459791826442" clover="3.2.0">
+	<project timestamp="1459791826442"  name="All Files" >
+		<metrics statements="6"  coveredstatements="6"  conditionals="0"  coveredconditionals="0"  methods="1"  coveredmethods="1"  elements="7"  coveredelements="7"  complexity="0"  packages="1"  files="1"  classes="1"  loc="23"  ncloc="23" />
 		<package name="components" >
 			<metrics statements="6"  coveredstatements="6"  conditionals="0"  coveredconditionals="0"  methods="1"  coveredmethods="1" />
 			<file name="app.js"  path="/Users/joshsilverstein/workspace/capstone/friendFinder/public/src/components/app.js" >
@@ -11,7 +11,7 @@
 				<line num="5"  count="1"  type="stmt" />
 				<line num="7"  count="1"  type="stmt" />
 				<line num="9"  count="1"  type="stmt" />
-				<line num="18"  count="1"  type="stmt" />
+				<line num="23"  count="1"  type="stmt" />
 			</file>
 		</package>
 	</project>
