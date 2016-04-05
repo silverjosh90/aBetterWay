@@ -5,6 +5,7 @@ var UserActions = require('../actions/userActions')
 var FacebookLogin =  React.createClass({
 
 responseFacebook: function(response) {
+
     console.log("hello");
     UserActions.createUser(response)
     hashHistory.push('/profile/' + response.id)
@@ -66,7 +67,7 @@ responseFacebook: function(response) {
 
 
   responseApi: function(authResponse){
-    FB.api('/me', { fields: ['name', "picture.width(400).height(400)"] }, (me) => {
+    FB.api('/me', { fields: ["picture.width(400).height(400)", 'first_name', 'last_name'] }, (me) => {
       me.accessToken = authResponse.accessToken;
       this.responseFacebook(me);
     });
@@ -82,7 +83,7 @@ responseFacebook: function(response) {
     }
   },
 
-  click: function(){
+  click: function(e){
     FB.login(this.checkLoginState, { scope: 'public_profile, email'});
   },
 

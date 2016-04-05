@@ -34049,7 +34049,24 @@ var UserActions = {
     var checkOrCreate =
 $.ajax({
   type: "POST",
-  url: 'https://friendedfinder.herokuapp.com/users/create',
+  url: 'http://localhost:3000/users/create',
+  data: user,
+  dataType: 'json',
+  cache: false,
+  error: function (xhr, ajaxOptions, thrownError) {
+          console.log(xhr);
+          console.log(thrownError)
+
+  },
+  success: function(data){
+    console.log(data)
+  }
+})
+  },
+  findUserById: function(id) {
+    $.ajax({
+  type: "POST",
+  url: 'http://localhost:3000/users/find',
   data: user,
   dataType: 'json',
   cache: false,
@@ -34060,22 +34077,7 @@ $.ajax({
     console.log(data)
   }
 })
-  }
-//   findUserById: function(id) {
-//     $.ajax({
-//   type: "POST",
-//   url: 'https://friendedfinder.herokuapp.com/users/find',
-//   data: user,
-//   dataType: 'json',
-//   cache: false,
-//   error: function (request, error) {
-//     console.log(" Can't do because: " + error);
-// },
-//   success: function(data){
-//     console.log(data)
-//   }
-//   }
-// }
+}
 }
 
 module.exports = UserActions
@@ -34097,11 +34099,8 @@ var App = React.createClass({displayName: "App",
       React.createElement("div", {className: "derp"}, 
         React.createElement("div", {className: "splashImg"}, 
           React.createElement("div", {className: "blurBackground"}, 
-            React.createElement("h2", {className: "pageTitle"}, "The Road Ahead"), 
-            React.createElement(Link, {to: "login", appId: "249945812017045", 
-              autoLoad: true, 
-              callback: this.responseFacebook, 
-              icon: "fa-facebook"}, React.createElement("button", {className: "btn btn-primary"}, " Learn More "))
+            React.createElement("h2", {className: "pageTitle"}, "The New Kid In Town"), 
+            React.createElement(Link, {to: "login"}, React.createElement("button", {className: "btn btn-primary"}, " Learn More "))
           )
         )
        )
@@ -34137,6 +34136,7 @@ var UserActions = require('../actions/userActions')
 var FacebookLogin =  React.createClass({displayName: "FacebookLogin",
 
 responseFacebook: function(response) {
+
     console.log("hello");
     UserActions.createUser(response)
     hashHistory.push('/profile/' + response.id)
@@ -34198,7 +34198,7 @@ responseFacebook: function(response) {
 
 
   responseApi: function(authResponse){
-    FB.api('/me', { fields: ['name', "picture.width(400).height(400)"] }, (me) => {
+    FB.api('/me', { fields: ["picture.width(400).height(400)", 'first_name', 'last_name'] }, (me) => {
       me.accessToken = authResponse.accessToken;
       this.responseFacebook(me);
     });
@@ -34214,7 +34214,7 @@ responseFacebook: function(response) {
     }
   },
 
-  click: function(){
+  click: function(e){
     FB.login(this.checkLoginState, { scope: 'public_profile, email'});
   },
 
@@ -34313,7 +34313,8 @@ var routes = (
     callback: responseFacebook, 
     icon: "fa-facebook"}), 
     React.createElement(Route, {path: "profile/:userid", component: Profile}), 
-    React.createElement(Route, {path: "*", component: PageNotFound})
+    React.createElement(Route, {path: "*", component: PageNotFound}), 
+    React.createElement(Route, {path: "*/*", component: PageNotFound})
   )
 );
 

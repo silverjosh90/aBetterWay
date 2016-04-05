@@ -23,6 +23,7 @@ var routes = (
     icon="fa-facebook" />
     <Route path="profile/:userid" component={Profile} />
     <Route path="*" component={PageNotFound} />
+    <Route path="*/*" component={PageNotFound} />
   </Router>
 );
 

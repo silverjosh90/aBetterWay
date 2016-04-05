@@ -14,11 +14,8 @@ var App = React.createClass({
       <div className="derp">
         <div className="splashImg">
           <div className="blurBackground">
-            <h2 className="pageTitle">The Road Ahead</h2>
-            <Link to="login"   appId="249945812017045"
-              autoLoad={true}
-              callback={this.responseFacebook}
-              icon="fa-facebook"><button className="btn btn-primary"> Learn More </button></Link>
+            <h2 className="pageTitle">The New Kid In Town</h2>
+            <Link to="login"><button className="btn btn-primary"> Learn More </button></Link>
           </div>
         </div>
        </div>

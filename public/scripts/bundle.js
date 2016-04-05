@@ -1234,7 +1234,7 @@ module.exports = performanceNow;
  *
  * @providesModule shallowEqual
  * @typechecks
- * 
+ *
  */
 
 'use strict';
@@ -1417,7 +1417,7 @@ module.exports.Dispatcher = require('./lib/Dispatcher');
  * of patent rights can be found in the PATENTS file in the same directory.
  *
  * @providesModule Dispatcher
- * 
+ *
  * @preventMunge
  */
 
@@ -14482,7 +14482,7 @@ function createRouteFromReactElement(element) {
  * nested.
  *
  *   import { Route, createRoutesFromReactChildren } from 'react-router'
- *   
+ *
  *   const routes = createRoutesFromReactChildren(
  *     <Route component={App}>
  *       <Route path="home" component={Dashboard}/>
@@ -34094,13 +34094,13 @@ var App = React.createClass({displayName: "App",
   },
   render: function() {
     return (
-      React.createElement("div", {className: "derp"}, 
-        React.createElement("div", {className: "splashImg"}, 
-          React.createElement("div", {className: "blurBackground"}, 
-            React.createElement("h2", {className: "pageTitle"}, "The Road Ahead"), 
-            React.createElement(Link, {to: "login", appId: "249945812017045", 
-              autoLoad: true, 
-              callback: this.responseFacebook, 
+      React.createElement("div", {className: "derp"},
+        React.createElement("div", {className: "splashImg"},
+          React.createElement("div", {className: "blurBackground"},
+            React.createElement("h2", {className: "pageTitle"}, "The Road Ahead"),
+            React.createElement(Link, {to: "login", appId: "249945812017045",
+              autoLoad: true,
+              callback: this.responseFacebook,
               icon: "fa-facebook"}, React.createElement("button", {className: "btn btn-primary"}, " Learn More "))
           )
         )
@@ -34118,9 +34118,9 @@ var Link = require('react-router').Link
 var PageNotFound = React.createClass({displayName: "PageNotFound",
   render: function() {
     return (
-      React.createElement("div", null, 
-      console.log('getting Here'), 
-      React.createElement("h1", null, " Page not found! "), 
+      React.createElement("div", null,
+      console.log('getting Here'),
+      React.createElement("h1", null, " Page not found! "),
       React.createElement(Link, {to: "/"}, " Go Home ")
       )
     )
@@ -34198,7 +34198,7 @@ responseFacebook: function(response) {
 
 
   responseApi: function(authResponse){
-    FB.api('/me', { fields: ['name', "picture.width(400).height(400)"] }, (me) => {
+    FB.api('/me', { fields: ["picture.width(400).height(400)", 'first_name', 'last_name'] }, (me) => {
       me.accessToken = authResponse.accessToken;
       this.responseFacebook(me);
     });
@@ -34215,6 +34215,7 @@ responseFacebook: function(response) {
   },
 
   click: function(){
+    this.preventDefault()
     FB.login(this.checkLoginState, { scope: 'public_profile, email'});
   },
 
@@ -34225,8 +34226,8 @@ responseFacebook: function(response) {
     }
 
     return (
-      React.createElement("div", null, 
-        React.createElement("button", {onClick: this.click}, 
+      React.createElement("div", null,
+        React.createElement("button", {onClick: this.click},
         "Login with facebook!"
 
         )
@@ -34256,8 +34257,8 @@ getInitialState: function() {
 render: function() {
 return(
 
-  React.createElement("div", null, 
-  React.createElement("p", null, " Joshua "), 
+  React.createElement("div", null,
+  React.createElement("p", null, " Joshua "),
   React.createElement("p", null, " no")
    )
 )
@@ -34269,7 +34270,7 @@ module.exports = Profile
 },{"../../actions/userActions":219}],224:[function(require,module,exports){
 module.exports =
 {
-  CREATE_USER: 'CREATE_USER' 
+  CREATE_USER: 'CREATE_USER'
 }
 
 },{}],225:[function(require,module,exports){
@@ -34305,14 +34306,14 @@ var responseFacebook = function(response) {
 }
 
 var routes = (
-  React.createElement(Router, {history: hashHistory}, 
-    React.createElement(Route, {path: "/", component: App}), 
-    React.createElement(Route, {path: "login", component: Login, 
-    appId: "249945812017045", 
-    autoLoad: true, 
-    callback: responseFacebook, 
-    icon: "fa-facebook"}), 
-    React.createElement(Route, {path: "profile/:userid", component: Profile}), 
+  React.createElement(Router, {history: hashHistory},
+    React.createElement(Route, {path: "/", component: App}),
+    React.createElement(Route, {path: "login", component: Login,
+    appId: "249945812017045",
+    autoLoad: true,
+    callback: responseFacebook,
+    icon: "fa-facebook"}),
+    React.createElement(Route, {path: "profile/:userid", component: Profile}),
     React.createElement(Route, {path: "*", component: PageNotFound})
   )
 );
