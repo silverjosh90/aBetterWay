@@ -4,10 +4,10 @@ var hashHistory= Router.hashHistory
 var FacebookLogin =  React.createClass({
 
 responseFacebook: function(response) {
-    console.log(response.picture);
-    hashHistory.push('/')
+    console.log(response);
+    hashHistory.push('/profile/' + response.id)
   },
-
+    
   propTypes: {
 
     xfbml: PropTypes.bool,

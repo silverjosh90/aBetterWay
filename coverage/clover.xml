@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1459791826442" clover="3.2.0">
-	<project timestamp="1459791826442"  name="All Files" >
-		<metrics statements="6"  coveredstatements="6"  conditionals="0"  coveredconditionals="0"  methods="1"  coveredmethods="1"  elements="7"  coveredelements="7"  complexity="0"  packages="1"  files="1"  classes="1"  loc="23"  ncloc="23" />
+<coverage generated="1459814400400" clover="3.2.0">
+	<project timestamp="1459814400400"  name="All Files" >
+		<metrics statements="9"  coveredstatements="7"  conditionals="0"  coveredconditionals="0"  methods="2"  coveredmethods="1"  elements="11"  coveredelements="8"  complexity="0"  packages="1"  files="1"  classes="1"  loc="30"  ncloc="30" />
 		<package name="components" >
-			<metrics statements="6"  coveredstatements="6"  conditionals="0"  coveredconditionals="0"  methods="1"  coveredmethods="1" />
+			<metrics statements="9"  coveredstatements="7"  conditionals="0"  coveredconditionals="0"  methods="2"  coveredmethods="1" />
 			<file name="app.js"  path="/Users/joshsilverstein/workspace/capstone/friendFinder/public/src/components/app.js" >
-				<metrics statements="6"  coveredstatements="6"  conditionals="0"  coveredconditionals="0"  methods="1"  coveredmethods="1" />
+				<metrics statements="9"  coveredstatements="7"  conditionals="0"  coveredconditionals="0"  methods="2"  coveredmethods="1" />
+				<line num="2"  count="1"  type="stmt" />
 				<line num="3"  count="1"  type="stmt" />
 				<line num="4"  count="1"  type="stmt" />
 				<line num="5"  count="1"  type="stmt" />
 				<line num="7"  count="1"  type="stmt" />
-				<line num="9"  count="1"  type="stmt" />
-				<line num="23"  count="1"  type="stmt" />
+				<line num="9"  count="0"  type="stmt" />
+				<line num="10"  count="0"  type="stmt" />
+				<line num="13"  count="1"  type="stmt" />
+				<line num="30"  count="1"  type="stmt" />
 			</file>
 		</package>
 	</project>
