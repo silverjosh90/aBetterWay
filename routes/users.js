@@ -5,7 +5,7 @@ var router = express.Router();
 router.get('/create', function(req, res, next) {
   console.log('here'
   )
-  res.send('Go through!');
+  res.json('Go through!');
 });
 
 module.exports = router;

@@ -34048,11 +34048,14 @@ var UserActions = {
   createUser: function(user) {
     var checkOrCreate =
     $.ajax({
-  url: 'http://localhost3000.com/user/create',
+  url: 'https://friendedfinder.herokuapp.com/users/create',
   dataType: 'json',
   cache: false,
+  error: function (request, error) {
+    console.log(" Can't do because: " + error);
+},
   success: function(data){
-    console.log(data)
+    console.log('data')
   }
 })
   }
@@ -34119,7 +34122,7 @@ responseFacebook: function(response) {
     console.log(response);
     hashHistory.push('/profile/' + response.id)
   },
-    
+
   propTypes: {
 
     xfbml: PropTypes.bool,
@@ -34136,7 +34139,7 @@ responseFacebook: function(response) {
   },
 
 
-  componentDidMount() {
+  componentDidMount: function() {
     let fbRoot = document.createElement('div');
         fbRoot.id = 'fb-root';
 

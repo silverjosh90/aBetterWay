@@ -7,7 +7,7 @@ responseFacebook: function(response) {
     console.log(response);
     hashHistory.push('/profile/' + response.id)
   },
-    
+
   propTypes: {
 
     xfbml: PropTypes.bool,
@@ -24,7 +24,7 @@ responseFacebook: function(response) {
   },
 
 
-  componentDidMount() {
+  componentDidMount: function() {
     let fbRoot = document.createElement('div');
         fbRoot.id = 'fb-root';
 

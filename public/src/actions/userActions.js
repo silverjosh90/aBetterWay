@@ -5,11 +5,14 @@ var UserActions = {
   createUser: function(user) {
     var checkOrCreate =
     $.ajax({
-  url: 'http://localhost3000.com/user/create',
+  url: 'https://friendedfinder.herokuapp.com/users/create',
   dataType: 'json',
   cache: false,
+  error: function (request, error) {
+    console.log(" Can't do because: " + error);
+},
   success: function(data){
-    console.log(data)
+    console.log('data')
   }
 })
   }
