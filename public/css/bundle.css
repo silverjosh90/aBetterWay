@@ -1,0 +1,44 @@
+body {
+  height: 100vh;
+  width: 100vh;
+}
+h2 {
+  margin-top: 0px;
+}
+.splashImg {
+  background-image: url('../images/roadlessTraveled.jpg');
+  /*-webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;*/
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  width: 100vw;
+  height: 100vh;
+  -webkit-filter: brightness(1.05);
+  display: flex;
+}
+
+.blurBackground {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  margin: auto;
+  margin-top: 35vh
+}
+
+.btn {
+  width: 50%;
+  margin: auto;
+}
+
+.pageTitle{
+  font-weight: 900;
+  font-size: 3.3em;
+  letter-spacing: 4px;
+}
+
+#content {
+  height: 100vh;
+  width: 100vw;
+}

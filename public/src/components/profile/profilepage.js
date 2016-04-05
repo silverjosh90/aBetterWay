@@ -3,22 +3,22 @@ var UserActions = require('../../actions/userActions')
 var Profile = React.createClass({
 
 getInitialState: function() {
-  return { user:
-    UserActions.createUser(this.props.params)
+  return { user: ''
+    // UserActions.findUserById(this.props.params)
     // {
     // name: 'Josh',
     // profilePicture: '',
     // bio: ''
     // }
   }
-},    
+},
 
 render: function() {
 return(
 
   <div>
   <p> Joshua </p>
-  <p> duh </p>
+  <p> no</p>
    </div>
 )
 }

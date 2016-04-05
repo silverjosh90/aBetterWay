@@ -22,6 +22,7 @@ var config = {
     css: './public/src/*.css',
     images: './public/src/images/*',
     dist: './public/dist',
+    public: './public',
     mainJs: './public/src/main.js'
   }
 }
@@ -42,7 +43,7 @@ gulp.task('open', ['connect'], function(){
 
 gulp.task('html', function(){
   gulp.src(config.paths.html)
-    .pipe(gulp.dest(config.paths.dist))
+    .pipe(gulp.dest(config.paths.public))
     .pipe(connect.reload());
 })
 
@@ -52,20 +53,20 @@ gulp.task('js', function(){
     .bundle()
     .on('error', console.error.bind(console))
     .pipe(source('bundle.js'))
-    .pipe(gulp.dest(config.paths.dist + '/scripts'))
+    .pipe(gulp.dest(config.paths.public + '/scripts'))
     .pipe(connect.reload());
 })
 
 gulp.task('images', function(){
   gulp.src(config.paths.images)
-    .pipe(gulp.dest(config.paths.dist + '/images'))
+    .pipe(gulp.dest(config.paths.public + '/images'))
     .pipe(connect.reload())
 })
 
 gulp.task('css', function() {
 	gulp.src(config.paths.css)
 		.pipe(concat('bundle.css'))
-		.pipe(gulp.dest(config.paths.dist + '/css'));
+		.pipe(gulp.dest(config.paths.public + '/css'));
 });
 
 

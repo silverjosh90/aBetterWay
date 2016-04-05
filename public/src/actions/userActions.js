@@ -4,7 +4,7 @@ var ActionTypes = require('../constants/actionTypes')
 var UserActions = {
   createUser: function(user) {
     var checkOrCreate =
-    $.ajax({
+$.ajax({
   type: "POST",
   url: 'https://friendedfinder.herokuapp.com/users/create',
   data: user,
@@ -18,6 +18,21 @@ var UserActions = {
   }
 })
   }
+//   findUserById: function(id) {
+//     $.ajax({
+//   type: "POST",
+//   url: 'https://friendedfinder.herokuapp.com/users/find',
+//   data: user,
+//   dataType: 'json',
+//   cache: false,
+//   error: function (request, error) {
+//     console.log(" Can't do because: " + error);
+// },
+//   success: function(data){
+//     console.log(data)
+//   }
+//   }
+// }
 }
 
 module.exports = UserActions

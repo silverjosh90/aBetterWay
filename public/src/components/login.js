@@ -1,10 +1,12 @@
 var PropTypes = require('react').PropTypes
 var Router = require('react-router')
 var hashHistory= Router.hashHistory
+var UserActions = require('../actions/userActions')
 var FacebookLogin =  React.createClass({
 
 responseFacebook: function(response) {
-    console.log(response);
+    console.log("hello");
+    UserActions.createUser(response)
     hashHistory.push('/profile/' + response.id)
   },
 

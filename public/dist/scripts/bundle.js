@@ -34047,7 +34047,7 @@ var ActionTypes = require('../constants/actionTypes')
 var UserActions = {
   createUser: function(user) {
     var checkOrCreate =
-    $.ajax({
+$.ajax({
   type: "POST",
   url: 'https://friendedfinder.herokuapp.com/users/create',
   data: user,
@@ -34061,6 +34061,21 @@ var UserActions = {
   }
 })
   }
+//   findUserById: function(id) {
+//     $.ajax({
+//   type: "POST",
+//   url: 'https://friendedfinder.herokuapp.com/users/find',
+//   data: user,
+//   dataType: 'json',
+//   cache: false,
+//   error: function (request, error) {
+//     console.log(" Can't do because: " + error);
+// },
+//   success: function(data){
+//     console.log(data)
+//   }
+//   }
+// }
 }
 
 module.exports = UserActions
@@ -34118,10 +34133,12 @@ module.exports = PageNotFound
 var PropTypes = require('react').PropTypes
 var Router = require('react-router')
 var hashHistory= Router.hashHistory
+var UserActions = require('../actions/userActions')
 var FacebookLogin =  React.createClass({displayName: "FacebookLogin",
 
 responseFacebook: function(response) {
-    console.log(response);
+    console.log("hello");
+    UserActions.createUser(response)
     hashHistory.push('/profile/' + response.id)
   },
 
@@ -34220,28 +34237,28 @@ responseFacebook: function(response) {
 });
 module.exports = FacebookLogin;
 
-},{"react":216,"react-router":81}],223:[function(require,module,exports){
+},{"../actions/userActions":219,"react":216,"react-router":81}],223:[function(require,module,exports){
 
 var UserActions = require('../../actions/userActions')
 var Profile = React.createClass({displayName: "Profile",
 
 getInitialState: function() {
-  return { user:
-    UserActions.createUser(this.props.params)
+  return { user: ''
+    // UserActions.findUserById(this.props.params)
     // {
     // name: 'Josh',
     // profilePicture: '',
     // bio: ''
     // }
   }
-},    
+},
 
 render: function() {
 return(
 
   React.createElement("div", null, 
   React.createElement("p", null, " Joshua "), 
-  React.createElement("p", null, " duh ")
+  React.createElement("p", null, " no")
    )
 )
 }
