@@ -3,9 +3,9 @@ var router = express.Router();
 
 /* GET users listing. */
 router.get('/create', function(req, res, next) {
-  console.log('here'
-  )
-  res.json(req.body);
+  console.log(req.body)
+
+  res.json("req.body");
 });
 
 module.exports = router;
