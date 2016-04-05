@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./public/bin/www",
+    "start": "node ./bin/www",
     "test": "jest"
   },
   "jest": {
