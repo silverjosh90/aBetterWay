@@ -7,7 +7,6 @@ var Profile = React.createClass({
 getInitialState: function() {
   return {
       person: {},
-      otherUsers: {}
   }
     // UserActions.findUserById(this.props.params)
     // {
@@ -40,8 +39,8 @@ return(
 
   <div>
   <h1>Welcome to the road Ahead {this.state.person.firstname}</h1>
-    <UserInfo profilepicture={this.state.person.profilepicture} otherPeople={this.state.otherUsers} firstname={this.state.person.firstname} lastname={this.state.person.lastname}  />
-    <Link to="chat" query={{userid: usersID}}> Chat with friends~~! </Link>
+    <UserInfo profilepicture={this.state.person.profilepicture} firstname={this.state.person.firstname} lastname={this.state.person.lastname}  />
+    <Link to={`chat/all/${this.state.person.fb_id}`}> Chat with friends~~! </Link>
    </div>
 )
 }

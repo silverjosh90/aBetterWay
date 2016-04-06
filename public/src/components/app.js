@@ -27,6 +27,7 @@ var App = React.createClass({
   _onChange: function() {
     var derp = UserStore.getAllUsers()
     this.setState({users: derp})
+    console.log(this.state.users);
 
 
   },

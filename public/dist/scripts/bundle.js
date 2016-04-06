@@ -50328,7 +50328,7 @@ InitializeActions = {
 
 module.exports = InitializeActions
 
-},{"../constants/actionTypes":229,"../dispatcher/appDispatcher":230}],223:[function(require,module,exports){
+},{"../constants/actionTypes":231,"../dispatcher/appDispatcher":232}],223:[function(require,module,exports){
 var Dispatcher = require('../dispatcher/appDispatcher');
 var ActionTypes = require('../constants/actionTypes')
 
@@ -50378,7 +50378,7 @@ $.ajax({
 
 module.exports = UserActions
 
-},{"../constants/actionTypes":229,"../dispatcher/appDispatcher":230}],224:[function(require,module,exports){
+},{"../constants/actionTypes":231,"../dispatcher/appDispatcher":232}],224:[function(require,module,exports){
 
 var $ = require('jquery')
 var PropTypes = require('react').PropTypes
@@ -50408,6 +50408,7 @@ var App = React.createClass({displayName: "App",
   _onChange: function() {
     var derp = UserStore.getAllUsers()
     this.setState({users: derp})
+    console.log(this.state.users);
 
 
   },
@@ -50511,7 +50512,7 @@ var App = React.createClass({displayName: "App",
 
 module.exports = App
 
-},{"../actions/userActions":223,"../stores/userStore":233,"jquery":52,"react":219,"react-router":84}],225:[function(require,module,exports){
+},{"../actions/userActions":223,"../stores/userStore":235,"jquery":52,"react":219,"react-router":84}],225:[function(require,module,exports){
 var Link = require('react-router').Link
 
 var PageNotFound = React.createClass({displayName: "PageNotFound",
@@ -50529,6 +50530,52 @@ var PageNotFound = React.createClass({displayName: "PageNotFound",
 module.exports = PageNotFound
 
 },{"react-router":84}],226:[function(require,module,exports){
+
+var DisplayAllUsers = require('./displayallusers')
+var UserStore = require('../../stores/userStore')
+
+var Chat = React.createClass({displayName: "Chat",
+  getInitialState: function() {
+    return {users: UserStore.getAllUsers()}
+  },
+
+
+  render: function() {
+    return (
+      React.createElement("div", null, 
+      React.createElement("p", null, " hello "), 
+      React.createElement(DisplayAllUsers, {user: this.state.users})
+      )
+    )
+
+}
+})
+
+module.exports = Chat
+
+},{"../../stores/userStore":235,"./displayallusers":227}],227:[function(require,module,exports){
+var DisplayAllUsers = React.createClass({displayName: "DisplayAllUsers",
+
+  render: function() {
+    var allUsers = this.props.user
+  
+    var individualUsers = allUsers.map(function(user){
+      return (React.createElement("div", null, 
+        React.createElement("p", null, " ", user.firstname, " ")
+        )
+      )
+    })
+    return (
+      React.createElement("div", null, 
+      individualUsers
+      )
+    )
+  }
+})
+
+module.exports = DisplayAllUsers
+
+},{}],228:[function(require,module,exports){
 // var PropTypes = require('react').PropTypes
 // var Router = require('react-router')
 // var hashHistory= Router.hashHistory
@@ -50636,7 +50683,7 @@ module.exports = PageNotFound
 // });
 // module.exports = FacebookLogin;
 
-},{}],227:[function(require,module,exports){
+},{}],229:[function(require,module,exports){
 var Link = require('react-router').Link
 var UserActions = require('../../actions/userActions')
 var UserStore = require('../../stores/userStore')
@@ -50646,7 +50693,6 @@ var Profile = React.createClass({displayName: "Profile",
 getInitialState: function() {
   return {
       person: {},
-      otherUsers: {}
   }
     // UserActions.findUserById(this.props.params)
     // {
@@ -50679,8 +50725,8 @@ return(
 
   React.createElement("div", null, 
   React.createElement("h1", null, "Welcome to the road Ahead ", this.state.person.firstname), 
-    React.createElement(UserInfo, {profilepicture: this.state.person.profilepicture, otherPeople: this.state.otherUsers, firstname: this.state.person.firstname, lastname: this.state.person.lastname}), 
-    React.createElement(Link, {to: "chat", query: {userid: usersID}}, " Chat with friends~~! ")
+    React.createElement(UserInfo, {profilepicture: this.state.person.profilepicture, firstname: this.state.person.firstname, lastname: this.state.person.lastname}), 
+    React.createElement(Link, {to: `chat/all/${this.state.person.fb_id}`}, " Chat with friends~~! ")
    )
 )
 }
@@ -50688,7 +50734,7 @@ return(
 
 module.exports = Profile
 
-},{"../../actions/userActions":223,"../../stores/userStore":233,"./userinfo":228,"react-router":84}],228:[function(require,module,exports){
+},{"../../actions/userActions":223,"../../stores/userStore":235,"./userinfo":230,"react-router":84}],230:[function(require,module,exports){
 
 
 UserInfo = React.createClass({displayName: "UserInfo",
@@ -50696,7 +50742,6 @@ UserInfo = React.createClass({displayName: "UserInfo",
     return (
     React.createElement("div", null, 
       React.createElement("img", {src: this.props.profilepicture}), 
-      console.log(this.props.profilepicture), 
       React.createElement("p", null, " Hello ", this.props.firstname, " ", this.props.lastname, " ")
     )
   )
@@ -50705,19 +50750,19 @@ UserInfo = React.createClass({displayName: "UserInfo",
 
 module.exports = UserInfo
 
-},{}],229:[function(require,module,exports){
+},{}],231:[function(require,module,exports){
 module.exports =
 {
   INITIALIZE: 'INITIALIZE',
   CREATE_USER: 'CREATE_USER'
 }
 
-},{}],230:[function(require,module,exports){
+},{}],232:[function(require,module,exports){
 var Dispatcher = require('flux').Dispatcher
 
 module.exports = new Dispatcher();
 
-},{"flux":32}],231:[function(require,module,exports){
+},{"flux":32}],233:[function(require,module,exports){
 var routes = require('./routes')
 var InitializeActions = require('./actions/initializeActions')
 
@@ -50729,7 +50774,7 @@ ReactDOM.render(
   document.getElementById('content')
 )
 
-},{"./actions/initializeActions":222,"./routes":232}],232:[function(require,module,exports){
+},{"./actions/initializeActions":222,"./routes":234}],234:[function(require,module,exports){
 var Router = require('react-router').Router
 var Route = require('react-router').Route;
 var hashHistory = require('react-router').hashHistory
@@ -50737,18 +50782,18 @@ var App = require('./components/app')
 var PageNotFound = require('./components/common/pagenotfound')
 var Login = require('./components/login')
 var Profile = require('./components/profile/profilepage')
+var Chat = require('./components/conversation/alluserschat')
 
 
 var responseFacebook = function(response) {
-  console.log(response)
-  console.log(response.picture);
-  // LoginActions.checkUser(response)
+  // LoginActions.checkUser(response)              
 }
 
 var routes = (
   React.createElement(Router, {history: hashHistory}, 
     React.createElement(Route, {path: "/", component: App}), 
     React.createElement(Route, {path: "profile/:userid", component: Profile}), 
+    React.createElement(Route, {path: "chat/all/:userid", component: Chat}), 
     React.createElement(Route, {path: "*", component: PageNotFound}), 
     React.createElement(Route, {path: "*/*", component: PageNotFound})
   )
@@ -50757,7 +50802,7 @@ var routes = (
 
 module.exports = routes;
 
-},{"./components/app":224,"./components/common/pagenotfound":225,"./components/login":226,"./components/profile/profilepage":227,"react-router":84}],233:[function(require,module,exports){
+},{"./components/app":224,"./components/common/pagenotfound":225,"./components/conversation/alluserschat":226,"./components/login":228,"./components/profile/profilepage":229,"react-router":84}],235:[function(require,module,exports){
 var Dispatcher = require('../dispatcher/appDispatcher')
 var ActionType = require('../constants/actionTypes')
 var EventEmitter = require('events').EventEmitter
@@ -50828,4 +50873,4 @@ Dispatcher.register(function(action){
 
 module.exports = UserStore;
 
-},{"../constants/actionTypes":229,"../dispatcher/appDispatcher":230,"events":4,"lodash":53,"object-assign":54}]},{},[231]);
+},{"../constants/actionTypes":231,"../dispatcher/appDispatcher":232,"events":4,"lodash":53,"object-assign":54}]},{},[233]);
