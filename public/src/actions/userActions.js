@@ -16,7 +16,11 @@ $.ajax({
 
   },
   success: function(data){
-    console.log(data)
+
+    Dispatcher.dispatch({
+      actionType: ActionTypes.CREATE_USER,
+      user: data
+    })
   }
 })
   },
@@ -24,14 +28,18 @@ $.ajax({
     $.ajax({
   type: "POST",
   url: 'http://localhost:3000/users/find',
-  data: user,
+  data:
+  {userid: id },
   dataType: 'json',
   cache: false,
   error: function (request, error) {
     console.log(" Can't do because: " + error);
 },
-  success: function(data){
-    console.log(data)
+  success: function(rest){
+    Dispatcher.dispatch({
+      actionType: ActionTypes.CREATE_USER,
+      user: rest
+    })
   }
 })
 }

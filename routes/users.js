@@ -8,38 +8,51 @@ function Users() {
   return knex('users')
 }
 
+Api.route('/')
+  .get(function(req,res){
+    Users().select().then(function(results){
+      res.json(results)
+    })
+  })
+
 Api.route('/create')
   .post(function(req, res, next) {
+    console.log('This is the id '+ req.body.id);
     var picture = 'picture[data][url]'
     var reqbody = req.body
-    // console.log(req[body][picture][data][url])
-
     var newUser = {
       firstname: req.body.first_name,
       lastname: req.body.last_name,
-      fb_id: Number(req.body.id),
+      fb_id: req.body.id,
       profilepicture: reqbody[picture]
     };
-    console.log(newUser)
-    Users().insert(newUser).then(function(results){
-      res.json('created')
-    })
+
+    Users().select().where({fb_id: req.body.id}).first().then(function(results){
+      if(results == undefined){
+        Users().insert(newUser).then(function(result){
+          Users().select().where({fb_id: req.body.id}).first().then(function(rest){
+            res.json(rest)
+          })
+        })
+      }
+      else {
+        res.json('success')
+        }
+  })
   //   console.log(req.body.id)
-  // Users.select().where({fb_id: req.body.id}).then(function(results){
-  //   if(!results){
-  //   res.json('results')
-  // }
-  //   else{
-  //     res.json('worked')
-  //   }
-  // })
-  // res.json(req.body)
 
 });
 
-Api.route('/find/:id')
-  .get(function(req,res){
-
+Api.route('/find')
+  .post(function(req,res){
+    console.log(req.body)
+    var derp = Number(req.body.userid)
+    Users().select().where({fb_id: derp}).first().then(function(result){
+      console.log("what im looking for");
+      console.log(result);
+      console.log('found');
+      res.json(result)
+    })
   })
 
 module.exports = Api;

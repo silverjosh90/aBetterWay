@@ -16,11 +16,6 @@ var responseFacebook = function(response) {
 var routes = (
   <Router history={hashHistory}>
     <Route path="/" component={App} />
-    <Route path="login" component={Login}
-    appId="249945812017045"
-    autoLoad={true}
-    callback={responseFacebook}
-    icon="fa-facebook" />
     <Route path="profile/:userid" component={Profile} />
     <Route path="*" component={PageNotFound} />
     <Route path="*/*" component={PageNotFound} />

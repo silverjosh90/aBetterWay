@@ -1,4 +1,5 @@
 module.exports =
 {
-  CREATE_USER: 'CREATE_USER' 
+  INITIALIZE: 'INITIALIZE',
+  CREATE_USER: 'CREATE_USER'
 }
