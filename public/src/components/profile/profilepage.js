@@ -7,6 +7,7 @@ var Profile = React.createClass({
 getInitialState: function() {
   return {
       person: {},
+      otherUsers: {},
   }
     // UserActions.findUserById(this.props.params)
     // {

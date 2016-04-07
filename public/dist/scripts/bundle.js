@@ -2159,7 +2159,7 @@ function readState(key) {
   return null;
 }
 }).call(this,require('_process'))
-},{"_process":55,"warning":221}],38:[function(require,module,exports){
+},{"_process":55,"warning":222}],38:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -2291,7 +2291,7 @@ function parsePath(path) {
   };
 }
 }).call(this,require('_process'))
-},{"_process":55,"warning":221}],41:[function(require,module,exports){
+},{"_process":55,"warning":222}],41:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -2762,7 +2762,7 @@ function createHashHistory() {
 exports['default'] = createHashHistory;
 module.exports = exports['default'];
 }).call(this,require('_process'))
-},{"./Actions":35,"./DOMStateStorage":37,"./DOMUtils":38,"./ExecutionEnvironment":39,"./PathUtils":40,"./createDOMHistory":42,"_process":55,"invariant":51,"warning":221}],44:[function(require,module,exports){
+},{"./Actions":35,"./DOMStateStorage":37,"./DOMUtils":38,"./ExecutionEnvironment":39,"./PathUtils":40,"./createDOMHistory":42,"_process":55,"invariant":51,"warning":222}],44:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -3053,7 +3053,7 @@ function createHistory() {
 exports['default'] = createHistory;
 module.exports = exports['default'];
 }).call(this,require('_process'))
-},{"./Actions":35,"./AsyncUtils":36,"./PathUtils":40,"./createLocation":45,"./deprecate":47,"./runTransitionHook":48,"_process":55,"deep-equal":1,"warning":221}],45:[function(require,module,exports){
+},{"./Actions":35,"./AsyncUtils":36,"./PathUtils":40,"./createLocation":45,"./deprecate":47,"./runTransitionHook":48,"_process":55,"deep-equal":1,"warning":222}],45:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -3107,7 +3107,7 @@ function createLocation() {
 exports['default'] = createLocation;
 module.exports = exports['default'];
 }).call(this,require('_process'))
-},{"./Actions":35,"./PathUtils":40,"_process":55,"warning":221}],46:[function(require,module,exports){
+},{"./Actions":35,"./PathUtils":40,"_process":55,"warning":222}],46:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -3264,7 +3264,7 @@ function createMemoryHistory() {
 exports['default'] = createMemoryHistory;
 module.exports = exports['default'];
 }).call(this,require('_process'))
-},{"./Actions":35,"./PathUtils":40,"./createHistory":44,"_process":55,"invariant":51,"warning":221}],47:[function(require,module,exports){
+},{"./Actions":35,"./PathUtils":40,"./createHistory":44,"_process":55,"invariant":51,"warning":222}],47:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -3286,7 +3286,7 @@ function deprecate(fn, message) {
 exports['default'] = deprecate;
 module.exports = exports['default'];
 }).call(this,require('_process'))
-},{"_process":55,"warning":221}],48:[function(require,module,exports){
+},{"_process":55,"warning":222}],48:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -3313,7 +3313,7 @@ function runTransitionHook(hook, location, callback) {
 exports['default'] = runTransitionHook;
 module.exports = exports['default'];
 }).call(this,require('_process'))
-},{"_process":55,"warning":221}],49:[function(require,module,exports){
+},{"_process":55,"warning":222}],49:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -3628,7 +3628,7 @@ function useQueries(createHistory) {
 exports['default'] = useQueries;
 module.exports = exports['default'];
 }).call(this,require('_process'))
-},{"./PathUtils":40,"./deprecate":47,"./runTransitionHook":48,"_process":55,"query-string":56,"warning":221}],51:[function(require,module,exports){
+},{"./PathUtils":40,"./deprecate":47,"./runTransitionHook":48,"_process":55,"query-string":56,"warning":222}],51:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -32476,7 +32476,7 @@ function routerWarning(falseToWarn, message) {
 
 module.exports = exports['default'];
 }).call(this,require('_process'))
-},{"_process":55,"warning":221}],89:[function(require,module,exports){
+},{"_process":55,"warning":222}],89:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -50235,6 +50235,443 @@ module.exports = function (str) {
 };
 
 },{}],221:[function(require,module,exports){
+/*
+ * Toastr
+ * Copyright 2012-2015
+ * Authors: John Papa, Hans Fjällemark, and Tim Ferrell.
+ * All Rights Reserved.
+ * Use, reproduction, distribution, and modification of this code is subject to the terms and
+ * conditions of the MIT license, available at http://www.opensource.org/licenses/mit-license.php
+ *
+ * ARIA Support: Greta Krafsig
+ *
+ * Project: https://github.com/CodeSeven/toastr
+ */
+/* global define */
+; (function (define) {
+    define(['jquery'], function ($) {
+        return (function () {
+            var $container;
+            var listener;
+            var toastId = 0;
+            var toastType = {
+                error: 'error',
+                info: 'info',
+                success: 'success',
+                warning: 'warning'
+            };
+
+            var toastr = {
+                clear: clear,
+                remove: remove,
+                error: error,
+                getContainer: getContainer,
+                info: info,
+                options: {},
+                subscribe: subscribe,
+                success: success,
+                version: '2.1.2',
+                warning: warning
+            };
+
+            var previousToast;
+
+            return toastr;
+
+            ////////////////
+
+            function error(message, title, optionsOverride) {
+                return notify({
+                    type: toastType.error,
+                    iconClass: getOptions().iconClasses.error,
+                    message: message,
+                    optionsOverride: optionsOverride,
+                    title: title
+                });
+            }
+
+            function getContainer(options, create) {
+                if (!options) { options = getOptions(); }
+                $container = $('#' + options.containerId);
+                if ($container.length) {
+                    return $container;
+                }
+                if (create) {
+                    $container = createContainer(options);
+                }
+                return $container;
+            }
+
+            function info(message, title, optionsOverride) {
+                return notify({
+                    type: toastType.info,
+                    iconClass: getOptions().iconClasses.info,
+                    message: message,
+                    optionsOverride: optionsOverride,
+                    title: title
+                });
+            }
+
+            function subscribe(callback) {
+                listener = callback;
+            }
+
+            function success(message, title, optionsOverride) {
+                return notify({
+                    type: toastType.success,
+                    iconClass: getOptions().iconClasses.success,
+                    message: message,
+                    optionsOverride: optionsOverride,
+                    title: title
+                });
+            }
+
+            function warning(message, title, optionsOverride) {
+                return notify({
+                    type: toastType.warning,
+                    iconClass: getOptions().iconClasses.warning,
+                    message: message,
+                    optionsOverride: optionsOverride,
+                    title: title
+                });
+            }
+
+            function clear($toastElement, clearOptions) {
+                var options = getOptions();
+                if (!$container) { getContainer(options); }
+                if (!clearToast($toastElement, options, clearOptions)) {
+                    clearContainer(options);
+                }
+            }
+
+            function remove($toastElement) {
+                var options = getOptions();
+                if (!$container) { getContainer(options); }
+                if ($toastElement && $(':focus', $toastElement).length === 0) {
+                    removeToast($toastElement);
+                    return;
+                }
+                if ($container.children().length) {
+                    $container.remove();
+                }
+            }
+
+            // internal functions
+
+            function clearContainer (options) {
+                var toastsToClear = $container.children();
+                for (var i = toastsToClear.length - 1; i >= 0; i--) {
+                    clearToast($(toastsToClear[i]), options);
+                }
+            }
+
+            function clearToast ($toastElement, options, clearOptions) {
+                var force = clearOptions && clearOptions.force ? clearOptions.force : false;
+                if ($toastElement && (force || $(':focus', $toastElement).length === 0)) {
+                    $toastElement[options.hideMethod]({
+                        duration: options.hideDuration,
+                        easing: options.hideEasing,
+                        complete: function () { removeToast($toastElement); }
+                    });
+                    return true;
+                }
+                return false;
+            }
+
+            function createContainer(options) {
+                $container = $('<div/>')
+                    .attr('id', options.containerId)
+                    .addClass(options.positionClass)
+                    .attr('aria-live', 'polite')
+                    .attr('role', 'alert');
+
+                $container.appendTo($(options.target));
+                return $container;
+            }
+
+            function getDefaults() {
+                return {
+                    tapToDismiss: true,
+                    toastClass: 'toast',
+                    containerId: 'toast-container',
+                    debug: false,
+
+                    showMethod: 'fadeIn', //fadeIn, slideDown, and show are built into jQuery
+                    showDuration: 300,
+                    showEasing: 'swing', //swing and linear are built into jQuery
+                    onShown: undefined,
+                    hideMethod: 'fadeOut',
+                    hideDuration: 1000,
+                    hideEasing: 'swing',
+                    onHidden: undefined,
+                    closeMethod: false,
+                    closeDuration: false,
+                    closeEasing: false,
+
+                    extendedTimeOut: 1000,
+                    iconClasses: {
+                        error: 'toast-error',
+                        info: 'toast-info',
+                        success: 'toast-success',
+                        warning: 'toast-warning'
+                    },
+                    iconClass: 'toast-info',
+                    positionClass: 'toast-top-right',
+                    timeOut: 5000, // Set timeOut and extendedTimeOut to 0 to make it sticky
+                    titleClass: 'toast-title',
+                    messageClass: 'toast-message',
+                    escapeHtml: false,
+                    target: 'body',
+                    closeHtml: '<button type="button">&times;</button>',
+                    newestOnTop: true,
+                    preventDuplicates: false,
+                    progressBar: false
+                };
+            }
+
+            function publish(args) {
+                if (!listener) { return; }
+                listener(args);
+            }
+
+            function notify(map) {
+                var options = getOptions();
+                var iconClass = map.iconClass || options.iconClass;
+
+                if (typeof (map.optionsOverride) !== 'undefined') {
+                    options = $.extend(options, map.optionsOverride);
+                    iconClass = map.optionsOverride.iconClass || iconClass;
+                }
+
+                if (shouldExit(options, map)) { return; }
+
+                toastId++;
+
+                $container = getContainer(options, true);
+
+                var intervalId = null;
+                var $toastElement = $('<div/>');
+                var $titleElement = $('<div/>');
+                var $messageElement = $('<div/>');
+                var $progressElement = $('<div/>');
+                var $closeElement = $(options.closeHtml);
+                var progressBar = {
+                    intervalId: null,
+                    hideEta: null,
+                    maxHideTime: null
+                };
+                var response = {
+                    toastId: toastId,
+                    state: 'visible',
+                    startTime: new Date(),
+                    options: options,
+                    map: map
+                };
+
+                personalizeToast();
+
+                displayToast();
+
+                handleEvents();
+
+                publish(response);
+
+                if (options.debug && console) {
+                    console.log(response);
+                }
+
+                return $toastElement;
+
+                function escapeHtml(source) {
+                    if (source == null)
+                        source = "";
+
+                    return new String(source)
+                        .replace(/&/g, '&amp;')
+                        .replace(/"/g, '&quot;')
+                        .replace(/'/g, '&#39;')
+                        .replace(/</g, '&lt;')
+                        .replace(/>/g, '&gt;');
+                }
+
+                function personalizeToast() {
+                    setIcon();
+                    setTitle();
+                    setMessage();
+                    setCloseButton();
+                    setProgressBar();
+                    setSequence();
+                }
+
+                function handleEvents() {
+                    $toastElement.hover(stickAround, delayedHideToast);
+                    if (!options.onclick && options.tapToDismiss) {
+                        $toastElement.click(hideToast);
+                    }
+
+                    if (options.closeButton && $closeElement) {
+                        $closeElement.click(function (event) {
+                            if (event.stopPropagation) {
+                                event.stopPropagation();
+                            } else if (event.cancelBubble !== undefined && event.cancelBubble !== true) {
+                                event.cancelBubble = true;
+                            }
+                            hideToast(true);
+                        });
+                    }
+
+                    if (options.onclick) {
+                        $toastElement.click(function (event) {
+                            options.onclick(event);
+                            hideToast();
+                        });
+                    }
+                }
+
+                function displayToast() {
+                    $toastElement.hide();
+
+                    $toastElement[options.showMethod](
+                        {duration: options.showDuration, easing: options.showEasing, complete: options.onShown}
+                    );
+
+                    if (options.timeOut > 0) {
+                        intervalId = setTimeout(hideToast, options.timeOut);
+                        progressBar.maxHideTime = parseFloat(options.timeOut);
+                        progressBar.hideEta = new Date().getTime() + progressBar.maxHideTime;
+                        if (options.progressBar) {
+                            progressBar.intervalId = setInterval(updateProgress, 10);
+                        }
+                    }
+                }
+
+                function setIcon() {
+                    if (map.iconClass) {
+                        $toastElement.addClass(options.toastClass).addClass(iconClass);
+                    }
+                }
+
+                function setSequence() {
+                    if (options.newestOnTop) {
+                        $container.prepend($toastElement);
+                    } else {
+                        $container.append($toastElement);
+                    }
+                }
+
+                function setTitle() {
+                    if (map.title) {
+                        $titleElement.append(!options.escapeHtml ? map.title : escapeHtml(map.title)).addClass(options.titleClass);
+                        $toastElement.append($titleElement);
+                    }
+                }
+
+                function setMessage() {
+                    if (map.message) {
+                        $messageElement.append(!options.escapeHtml ? map.message : escapeHtml(map.message)).addClass(options.messageClass);
+                        $toastElement.append($messageElement);
+                    }
+                }
+
+                function setCloseButton() {
+                    if (options.closeButton) {
+                        $closeElement.addClass('toast-close-button').attr('role', 'button');
+                        $toastElement.prepend($closeElement);
+                    }
+                }
+
+                function setProgressBar() {
+                    if (options.progressBar) {
+                        $progressElement.addClass('toast-progress');
+                        $toastElement.prepend($progressElement);
+                    }
+                }
+
+                function shouldExit(options, map) {
+                    if (options.preventDuplicates) {
+                        if (map.message === previousToast) {
+                            return true;
+                        } else {
+                            previousToast = map.message;
+                        }
+                    }
+                    return false;
+                }
+
+                function hideToast(override) {
+                    var method = override && options.closeMethod !== false ? options.closeMethod : options.hideMethod;
+                    var duration = override && options.closeDuration !== false ?
+                        options.closeDuration : options.hideDuration;
+                    var easing = override && options.closeEasing !== false ? options.closeEasing : options.hideEasing;
+                    if ($(':focus', $toastElement).length && !override) {
+                        return;
+                    }
+                    clearTimeout(progressBar.intervalId);
+                    return $toastElement[method]({
+                        duration: duration,
+                        easing: easing,
+                        complete: function () {
+                            removeToast($toastElement);
+                            if (options.onHidden && response.state !== 'hidden') {
+                                options.onHidden();
+                            }
+                            response.state = 'hidden';
+                            response.endTime = new Date();
+                            publish(response);
+                        }
+                    });
+                }
+
+                function delayedHideToast() {
+                    if (options.timeOut > 0 || options.extendedTimeOut > 0) {
+                        intervalId = setTimeout(hideToast, options.extendedTimeOut);
+                        progressBar.maxHideTime = parseFloat(options.extendedTimeOut);
+                        progressBar.hideEta = new Date().getTime() + progressBar.maxHideTime;
+                    }
+                }
+
+                function stickAround() {
+                    clearTimeout(intervalId);
+                    progressBar.hideEta = 0;
+                    $toastElement.stop(true, true)[options.showMethod](
+                        {duration: options.showDuration, easing: options.showEasing}
+                    );
+                }
+
+                function updateProgress() {
+                    var percentage = ((progressBar.hideEta - (new Date().getTime())) / progressBar.maxHideTime) * 100;
+                    $progressElement.width(percentage + '%');
+                }
+            }
+
+            function getOptions() {
+                return $.extend({}, getDefaults(), toastr.options);
+            }
+
+            function removeToast($toastElement) {
+                if (!$container) { $container = getContainer(); }
+                if ($toastElement.is(':visible')) {
+                    return;
+                }
+                $toastElement.remove();
+                $toastElement = null;
+                if ($container.children().length === 0) {
+                    $container.remove();
+                    previousToast = undefined;
+                }
+            }
+
+        })();
+    });
+}(typeof define === 'function' && define.amd ? define : function (deps, factory) {
+    if (typeof module !== 'undefined' && module.exports) { //Node
+        module.exports = factory(require('jquery'));
+    } else {
+        window.toastr = factory(window.jQuery);
+    }
+}));
+
+},{"jquery":52}],222:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-2015, Facebook, Inc.
@@ -50298,7 +50735,7 @@ if (process.env.NODE_ENV !== 'production') {
 module.exports = warning;
 
 }).call(this,require('_process'))
-},{"_process":55}],222:[function(require,module,exports){
+},{"_process":55}],223:[function(require,module,exports){
 var Dispatcher = require('../dispatcher/appDispatcher')
 var ActionTypes = require('../constants/actionTypes')
 
@@ -50315,12 +50752,26 @@ InitializeActions = {
 
       },
       success: function(data) {
+        $.ajax({
+          type: "GET",
+          url: 'http://localhost:3000/messages',
+          dataType: 'json',
+          cache: false,
+          error: function (xhr, ajaxOptions, thrownError) {
+                  console.log(xhr);
+                  console.log(thrownError)
+          },
+          success: function(info) {
+
         Dispatcher.dispatch({
           actionType: ActionTypes.INITIALIZE,
           initialData: {
-            users: data
+            users: data,
+            messages: info
           }
         })
+      }
+      })
       }
     })
   }
@@ -50328,7 +50779,7 @@ InitializeActions = {
 
 module.exports = InitializeActions
 
-},{"../constants/actionTypes":231,"../dispatcher/appDispatcher":232}],223:[function(require,module,exports){
+},{"../constants/actionTypes":233,"../dispatcher/appDispatcher":234}],224:[function(require,module,exports){
 var Dispatcher = require('../dispatcher/appDispatcher');
 var ActionTypes = require('../constants/actionTypes')
 
@@ -50378,7 +50829,7 @@ $.ajax({
 
 module.exports = UserActions
 
-},{"../constants/actionTypes":231,"../dispatcher/appDispatcher":232}],224:[function(require,module,exports){
+},{"../constants/actionTypes":233,"../dispatcher/appDispatcher":234}],225:[function(require,module,exports){
 
 var $ = require('jquery')
 var PropTypes = require('react').PropTypes
@@ -50389,6 +50840,7 @@ var Router = require('react-router')
 var hashHistory= Router.hashHistory
 var UserStore = require('../stores/userStore')
 var UserActions = require('../actions/userActions')
+var toastr = require('toastr')
 
 
 var App = React.createClass({displayName: "App",
@@ -50408,14 +50860,14 @@ var App = React.createClass({displayName: "App",
   _onChange: function() {
     var derp = UserStore.getAllUsers()
     this.setState({users: derp})
-    console.log(this.state.users);
 
 
   },
   responseFacebook: function(response) {
-
+    console.log(response);
       UserActions.createUser(response)
       hashHistory.push('/profile/' + response.id)
+      toastr.success('Thanks for logging in ' + response.first_name + "!" )
     },
 
     propTypes: {
@@ -50512,7 +50964,7 @@ var App = React.createClass({displayName: "App",
 
 module.exports = App
 
-},{"../actions/userActions":223,"../stores/userStore":235,"jquery":52,"react":219,"react-router":84}],225:[function(require,module,exports){
+},{"../actions/userActions":224,"../stores/userStore":237,"jquery":52,"react":219,"react-router":84,"toastr":221}],226:[function(require,module,exports){
 var Link = require('react-router').Link
 
 var PageNotFound = React.createClass({displayName: "PageNotFound",
@@ -50529,7 +50981,7 @@ var PageNotFound = React.createClass({displayName: "PageNotFound",
 
 module.exports = PageNotFound
 
-},{"react-router":84}],226:[function(require,module,exports){
+},{"react-router":84}],227:[function(require,module,exports){
 
 var DisplayAllUsers = require('./displayallusers')
 var UserStore = require('../../stores/userStore')
@@ -50538,13 +50990,18 @@ var Chat = React.createClass({displayName: "Chat",
   getInitialState: function() {
     return {users: UserStore.getAllUsers()}
   },
-
-
   render: function() {
+  var allUsers = this.state.users
+  var individualUsers = allUsers.map(function(user){
+    return (
+      React.createElement(DisplayAllUsers, {firstname: user.firstname, profilepicture: user.profilepicture, lastname: user.lastname, fb_id: user.fb_id, key: user.id})
+    )
+  })
+
     return (
       React.createElement("div", null, 
       React.createElement("p", null, " hello "), 
-      React.createElement(DisplayAllUsers, {user: this.state.users})
+      individualUsers
       )
     )
 
@@ -50553,29 +51010,36 @@ var Chat = React.createClass({displayName: "Chat",
 
 module.exports = Chat
 
-},{"../../stores/userStore":235,"./displayallusers":227}],227:[function(require,module,exports){
+},{"../../stores/userStore":237,"./displayallusers":228}],228:[function(require,module,exports){
+var Link = require('react-router').Link
 var DisplayAllUsers = React.createClass({displayName: "DisplayAllUsers",
 
   render: function() {
-    var allUsers = this.props.user
-  
-    var individualUsers = allUsers.map(function(user){
-      return (React.createElement("div", null, 
-        React.createElement("p", null, " ", user.firstname, " ")
-        )
-      )
-    })
+
     return (
-      React.createElement("div", null, 
-      individualUsers
+      React.createElement(Link, {to: `/chat/${this.props.fb_id}`}, 
+      React.createElement("img", {src: this.props.profilepicture, height: "200px", width: "200px"}), 
+      React.createElement("h5", null, " ", this.props.firstname, " ", this.props.lastname, " ")
       )
+
     )
   }
 })
 
 module.exports = DisplayAllUsers
 
-},{}],228:[function(require,module,exports){
+},{"react-router":84}],229:[function(require,module,exports){
+var IndividualChat = React.createClass({displayName: "IndividualChat",
+  render: function() {
+    return (
+      React.createElement("div", null, " hello ")
+    )
+  }
+})
+
+module.exports = IndividualChat
+
+},{}],230:[function(require,module,exports){
 // var PropTypes = require('react').PropTypes
 // var Router = require('react-router')
 // var hashHistory= Router.hashHistory
@@ -50683,7 +51147,7 @@ module.exports = DisplayAllUsers
 // });
 // module.exports = FacebookLogin;
 
-},{}],229:[function(require,module,exports){
+},{}],231:[function(require,module,exports){
 var Link = require('react-router').Link
 var UserActions = require('../../actions/userActions')
 var UserStore = require('../../stores/userStore')
@@ -50693,6 +51157,7 @@ var Profile = React.createClass({displayName: "Profile",
 getInitialState: function() {
   return {
       person: {},
+      otherUsers: {},
   }
     // UserActions.findUserById(this.props.params)
     // {
@@ -50734,7 +51199,7 @@ return(
 
 module.exports = Profile
 
-},{"../../actions/userActions":223,"../../stores/userStore":235,"./userinfo":230,"react-router":84}],230:[function(require,module,exports){
+},{"../../actions/userActions":224,"../../stores/userStore":237,"./userinfo":232,"react-router":84}],232:[function(require,module,exports){
 
 
 UserInfo = React.createClass({displayName: "UserInfo",
@@ -50750,19 +51215,19 @@ UserInfo = React.createClass({displayName: "UserInfo",
 
 module.exports = UserInfo
 
-},{}],231:[function(require,module,exports){
+},{}],233:[function(require,module,exports){
 module.exports =
 {
   INITIALIZE: 'INITIALIZE',
   CREATE_USER: 'CREATE_USER'
 }
 
-},{}],232:[function(require,module,exports){
+},{}],234:[function(require,module,exports){
 var Dispatcher = require('flux').Dispatcher
 
 module.exports = new Dispatcher();
 
-},{"flux":32}],233:[function(require,module,exports){
+},{"flux":32}],235:[function(require,module,exports){
 var routes = require('./routes')
 var InitializeActions = require('./actions/initializeActions')
 
@@ -50774,7 +51239,7 @@ ReactDOM.render(
   document.getElementById('content')
 )
 
-},{"./actions/initializeActions":222,"./routes":234}],234:[function(require,module,exports){
+},{"./actions/initializeActions":223,"./routes":236}],236:[function(require,module,exports){
 var Router = require('react-router').Router
 var Route = require('react-router').Route;
 var hashHistory = require('react-router').hashHistory
@@ -50783,26 +51248,24 @@ var PageNotFound = require('./components/common/pagenotfound')
 var Login = require('./components/login')
 var Profile = require('./components/profile/profilepage')
 var Chat = require('./components/conversation/alluserschat')
+var IndividualChat = require('./components/conversation/individualchat')
 
-
-var responseFacebook = function(response) {
-  // LoginActions.checkUser(response)              
-}
-
-var routes = (
+var routes = (  
   React.createElement(Router, {history: hashHistory}, 
     React.createElement(Route, {path: "/", component: App}), 
     React.createElement(Route, {path: "profile/:userid", component: Profile}), 
+    React.createElement(Route, {path: "chat/:userid", component: IndividualChat}), 
     React.createElement(Route, {path: "chat/all/:userid", component: Chat}), 
     React.createElement(Route, {path: "*", component: PageNotFound}), 
     React.createElement(Route, {path: "*/*", component: PageNotFound})
   )
+
 );
 
 
 module.exports = routes;
 
-},{"./components/app":224,"./components/common/pagenotfound":225,"./components/conversation/alluserschat":226,"./components/login":228,"./components/profile/profilepage":229,"react-router":84}],235:[function(require,module,exports){
+},{"./components/app":225,"./components/common/pagenotfound":226,"./components/conversation/alluserschat":227,"./components/conversation/individualchat":229,"./components/login":230,"./components/profile/profilepage":231,"react-router":84}],237:[function(require,module,exports){
 var Dispatcher = require('../dispatcher/appDispatcher')
 var ActionType = require('../constants/actionTypes')
 var EventEmitter = require('events').EventEmitter
@@ -50873,4 +51336,4 @@ Dispatcher.register(function(action){
 
 module.exports = UserStore;
 
-},{"../constants/actionTypes":231,"../dispatcher/appDispatcher":232,"events":4,"lodash":53,"object-assign":54}]},{},[233]);
+},{"../constants/actionTypes":233,"../dispatcher/appDispatcher":234,"events":4,"lodash":53,"object-assign":54}]},{},[235]);

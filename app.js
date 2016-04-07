@@ -8,6 +8,7 @@ var React = require('react')
 var ReactDOM = require('react-dom')
 
 var routes = require('./routes/index');
+var messages = require('./routes/messages');
 var users = require('./routes/users');
 
 var app = express();
@@ -31,6 +32,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
+app.use('/messages', messages);
 app.use('/users', users);
 
 // catch 404 and forward to error handler

@@ -8,6 +8,7 @@ var Router = require('react-router')
 var hashHistory= Router.hashHistory
 var UserStore = require('../stores/userStore')
 var UserActions = require('../actions/userActions')
+var toastr = require('toastr')
 
 
 var App = React.createClass({
@@ -27,14 +28,14 @@ var App = React.createClass({
   _onChange: function() {
     var derp = UserStore.getAllUsers()
     this.setState({users: derp})
-    console.log(this.state.users);
 
 
   },
   responseFacebook: function(response) {
-
+    console.log(response);
       UserActions.createUser(response)
       hashHistory.push('/profile/' + response.id)
+      toastr.success('Thanks for logging in ' + response.first_name + "!" )
     },
 
     propTypes: {
