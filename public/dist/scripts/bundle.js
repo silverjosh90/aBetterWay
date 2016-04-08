@@ -50739,7 +50739,7 @@ module.exports = warning;
 var Dispatcher = require('../dispatcher/appDispatcher')
 var ActionTypes = require('../constants/actionTypes')
 
-InitializeActions = {
+InitializeActions = {  
   initApp: function() {
     $.ajax({
       type: "GET",
@@ -50779,7 +50779,38 @@ InitializeActions = {
 
 module.exports = InitializeActions
 
-},{"../constants/actionTypes":233,"../dispatcher/appDispatcher":234}],224:[function(require,module,exports){
+},{"../constants/actionTypes":236,"../dispatcher/appDispatcher":237}],224:[function(require,module,exports){
+var Dispatcher = require('../dispatcher/appDispatcher');
+var ActionTypes = require('../constants/actionTypes')
+
+var MessageActions = {
+  submitComment: function(comment) {
+    var checkOrCreate =
+$.ajax({
+  type: "POST",
+  url: 'http://localhost:3000/messages/submit',
+  data: comment,
+  dataType: 'json',
+  cache: false,
+  error: function (xhr, ajaxOptions, thrownError) {
+          console.log(xhr);
+          console.log(thrownError)
+
+  },
+  success: function(data){
+    Dispatcher.dispatch({
+      actionType: ActionTypes.SUBMIT_COMMENT,
+      message: data
+    })
+  }
+})
+  },
+
+}
+
+module.exports= MessageActions
+
+},{"../constants/actionTypes":236,"../dispatcher/appDispatcher":237}],225:[function(require,module,exports){
 var Dispatcher = require('../dispatcher/appDispatcher');
 var ActionTypes = require('../constants/actionTypes')
 
@@ -50829,7 +50860,7 @@ $.ajax({
 
 module.exports = UserActions
 
-},{"../constants/actionTypes":233,"../dispatcher/appDispatcher":234}],225:[function(require,module,exports){
+},{"../constants/actionTypes":236,"../dispatcher/appDispatcher":237}],226:[function(require,module,exports){
 
 var $ = require('jquery')
 var PropTypes = require('react').PropTypes
@@ -50839,6 +50870,7 @@ var Link = require('react-router').Link
 var Router = require('react-router')
 var hashHistory= Router.hashHistory
 var UserStore = require('../stores/userStore')
+var MessageStore = require('../stores/messageStore')
 var UserActions = require('../actions/userActions')
 var toastr = require('toastr')
 
@@ -50846,20 +50878,24 @@ var toastr = require('toastr')
 var App = React.createClass({displayName: "App",
   getInitialState: function() {
     return {
-      users: {}
+      users: {},
+      messages: {}
     }
   },
   componentWillMount: function() {
     UserStore.addChangeListener(this._onChange)
+    MessageStore.addChangeListener(this._onChange)
   },
   componentWillUnmount: function() {
     UserStore.removeChangeListener(this._onChange)
+    MessageStore.removeChangeListener(this._onChange)
     // this.setState({users: UserStore.getUserById(this.props.params.userid)})
   // console.log('hello there ' + this.state.users);
   },
   _onChange: function() {
-    var derp = UserStore.getAllUsers()
-    this.setState({users: derp})
+    var getting_users = UserStore.getAllUsers()
+    var message = MessageStore.getAllMessages()
+    this.setState({users: getting_users})
 
 
   },
@@ -50964,7 +51000,7 @@ var App = React.createClass({displayName: "App",
 
 module.exports = App
 
-},{"../actions/userActions":224,"../stores/userStore":237,"jquery":52,"react":219,"react-router":84,"toastr":221}],226:[function(require,module,exports){
+},{"../actions/userActions":225,"../stores/messageStore":240,"../stores/userStore":241,"jquery":52,"react":219,"react-router":84,"toastr":221}],227:[function(require,module,exports){
 var Link = require('react-router').Link
 
 var PageNotFound = React.createClass({displayName: "PageNotFound",
@@ -50981,7 +51017,7 @@ var PageNotFound = React.createClass({displayName: "PageNotFound",
 
 module.exports = PageNotFound
 
-},{"react-router":84}],227:[function(require,module,exports){
+},{"react-router":84}],228:[function(require,module,exports){
 
 var DisplayAllUsers = require('./displayallusers')
 var UserStore = require('../../stores/userStore')
@@ -50991,16 +51027,18 @@ var Chat = React.createClass({displayName: "Chat",
     return {users: UserStore.getAllUsers()}
   },
   render: function() {
+    var parameter=this.props.params.userid
   var allUsers = this.state.users
   var individualUsers = allUsers.map(function(user){
     return (
-      React.createElement(DisplayAllUsers, {firstname: user.firstname, profilepicture: user.profilepicture, lastname: user.lastname, fb_id: user.fb_id, key: user.id})
+      React.createElement(DisplayAllUsers, {firstname: user.firstname, profilepicture: user.profilepicture, secondUser: parameter, lastname: user.lastname, fb_id: user.fb_id, key: user.id})
     )
   })
 
     return (
       React.createElement("div", null, 
       React.createElement("p", null, " hello "), 
+
       individualUsers
       )
     )
@@ -51010,14 +51048,82 @@ var Chat = React.createClass({displayName: "Chat",
 
 module.exports = Chat
 
-},{"../../stores/userStore":237,"./displayallusers":228}],228:[function(require,module,exports){
+},{"../../stores/userStore":241,"./displayallusers":231}],229:[function(require,module,exports){
+var CommentDisplay = React.createClass({displayName: "CommentDisplay",
+  render: function() {
+  userpic= this.props.userprofilepicture
+  friendpic= this.props.friendprofilepicture
+  userid = this.props.paramid
+  {console.log('here is my state')}
+  {console.log(this.props.messages)}
+  var displayMessages = this.props.messages.map(function(comment){
+
+    if (comment.sender_id == userid) {
+      picture = userpic
+    }
+    else {
+      picture = friendpic
+    }
+    return(
+
+      React.createElement("div", {className: "chatMessage", key: comment.id}, 
+      React.createElement("img", {className: "chatPic", src: picture}), 
+      React.createElement("p", {className: "chatComment"}, comment.message)
+      )
+
+    )
+  })
+    return (
+      React.createElement("div", null, 
+        displayMessages
+      )
+    )
+  }
+})
+
+module.exports = CommentDisplay
+
+},{}],230:[function(require,module,exports){
+
+var CommentForm = React.createClass({displayName: "CommentForm",
+  getInitialState: function() {
+    return {text: ''};
+  },
+
+  handleTextChange: function(e) {
+    this.setState({text: e.target.value})
+  },
+
+  handleSubmit: function(e) {
+    e.preventDefault();
+    var text = this.state.text.trim()
+
+    if(!text) {
+      return;
+    }
+    this.props.onCommentSubmit({text: text});
+    this.setState({text: ''})
+  },
+  render: function() {
+    return (
+        React.createElement("form", {className: "commentForm", onSubmit: this.handleSubmit}, 
+          React.createElement("input", {type: "text", placeholder: "Say something...", value: this.state.text, onChange: this.handleTextChange}), 
+          React.createElement("input", {type: "submit", value: "Post"})
+        )
+    );
+  }
+});
+
+module.exports= CommentForm
+
+},{}],231:[function(require,module,exports){
 var Link = require('react-router').Link
 var DisplayAllUsers = React.createClass({displayName: "DisplayAllUsers",
 
   render: function() {
 
     return (
-      React.createElement(Link, {to: `/chat/${this.props.fb_id}`}, 
+      React.createElement(Link, {to: `/conversation/${this.props.fb_id}/${this.props.secondUser}`}, 
       React.createElement("img", {src: this.props.profilepicture, height: "200px", width: "200px"}), 
       React.createElement("h5", null, " ", this.props.firstname, " ", this.props.lastname, " ")
       )
@@ -51028,18 +51134,108 @@ var DisplayAllUsers = React.createClass({displayName: "DisplayAllUsers",
 
 module.exports = DisplayAllUsers
 
-},{"react-router":84}],229:[function(require,module,exports){
-var IndividualChat = React.createClass({displayName: "IndividualChat",
+},{"react-router":84}],232:[function(require,module,exports){
+
+var MessageStore= require('../../stores/messageStore')
+var UserStore= require('../../stores/userStore')
+var MessageAction = require('../../actions/messageActions')
+var CommentForm = require('./commentform')
+var CommentDisplay = require('./commentDisplay')
+var IndividualChat= React.createClass({displayName: "IndividualChat",
+  getInitialState: function() {
+    return {
+      messages: MessageStore.getConvo(this.props.params.receiverid, this.props.params.userid),
+      user: UserStore.getUserById(this.props.params.userid),
+      friend: UserStore.getUserById(this.props.params.receiverid),
+  }
+},
+
+componentWillMount: function() {
+  MessageStore.addChangeListener(this._onChange)
+},
+componentWillUnmount: function() {
+  MessageStore.removeChangeListener(this._onChange)
+  // this.setState({users: UserStore.getUserById(this.props.params.userid)})
+// console.log('hello there ' + this.state.users);
+},
+
+_onChange: function(comment) {
+  fullComment = {
+    message: comment,
+    sender_id: this.props.params.userid,
+    receiver_id: this.props.params.receiverid,
+    date: Date.now()
+  }
+  MessageAction.submitComment(fullComment)
+  // var newMessages = this.state.messages
+  // console.log('this is the new message breh');
+  // console.log(newMessages);
+  // fullComment.id = Date.now()
+  // console.log(JSON.stringify(fullComment));
+  // var finalComment  = JSON.stringify(fullComment)
+  // pushed = newMessages.push(finalComment)
+  var messaged = MessageStore.getConvo(this.props.params.receiverid, this.props.params.userid)
+  this.setState({messages: messaged})
+
+
+
+
+  // var comments = this.state.data;
+  // comment.id = Date.now()
+  // var newComments = comments.concat([comment])
+  // this.setState({data: newComments});
+  // $.ajax({
+  //   url: this.props.url,
+  //   dataType: 'json',
+  //   type: 'POST',
+  //   data: comment,
+  //   succes: function(data){
+  //     this.setState({data: data});
+  //   }.bind(this),
+  //   error: function(xhr, status, err) {
+  //     this.setState({data: comments});
+  //     console.error(this.props.url, status, err.toString())
+  //   }.bind(this)
+  // });
+
+},
+
   render: function() {
+    userpic = this.state.user.profilepicture
+    friendpic = this.state.friend.profilepicture
+    userid = this.props.params.userid
+    // var displayMessages = this.state.messages.map(function(comment){
+    //   {displayMessages}
+    //   if (comment.sender_id == userid) {
+    //     picture = userpic
+    //   }
+    //   else {
+    //     picture = friendpic
+    //   }
+    //   return(
+    //
+    //     <div className="chatMessage">
+    //     <img className="chatPic" src={picture}/>
+    //     <p className="chatComment">{comment.message}</p>
+    //     </div>
+    //
+    //   )
+    // })
+    {console.log(this.state.user)}
+    {console.log(this.state.friend)}
     return (
-      React.createElement("div", null, " hello ")
+      React.createElement("div", null, 
+      React.createElement("p", null, "Haha Hehe"), 
+      React.createElement(CommentDisplay, {key: "derp", userprofilepicture: userpic, friendprofilepicture: friendpic, paramid: userid, messages: this.state.messages}), 
+      React.createElement(CommentForm, {onCommentSubmit: this._onChange})
+      )
     )
   }
 })
 
 module.exports = IndividualChat
 
-},{}],230:[function(require,module,exports){
+},{"../../actions/messageActions":224,"../../stores/messageStore":240,"../../stores/userStore":241,"./commentDisplay":229,"./commentform":230}],233:[function(require,module,exports){
 // var PropTypes = require('react').PropTypes
 // var Router = require('react-router')
 // var hashHistory= Router.hashHistory
@@ -51147,7 +51343,7 @@ module.exports = IndividualChat
 // });
 // module.exports = FacebookLogin;
 
-},{}],231:[function(require,module,exports){
+},{}],234:[function(require,module,exports){
 var Link = require('react-router').Link
 var UserActions = require('../../actions/userActions')
 var UserStore = require('../../stores/userStore')
@@ -51199,7 +51395,7 @@ return(
 
 module.exports = Profile
 
-},{"../../actions/userActions":224,"../../stores/userStore":237,"./userinfo":232,"react-router":84}],232:[function(require,module,exports){
+},{"../../actions/userActions":225,"../../stores/userStore":241,"./userinfo":235,"react-router":84}],235:[function(require,module,exports){
 
 
 UserInfo = React.createClass({displayName: "UserInfo",
@@ -51215,19 +51411,20 @@ UserInfo = React.createClass({displayName: "UserInfo",
 
 module.exports = UserInfo
 
-},{}],233:[function(require,module,exports){
+},{}],236:[function(require,module,exports){
 module.exports =
 {
   INITIALIZE: 'INITIALIZE',
-  CREATE_USER: 'CREATE_USER'
+  CREATE_USER: 'CREATE_USER',
+  SUBMIT_COMMENT: 'SUBMIT_COMMENT'
 }
 
-},{}],234:[function(require,module,exports){
+},{}],237:[function(require,module,exports){
 var Dispatcher = require('flux').Dispatcher
 
 module.exports = new Dispatcher();
 
-},{"flux":32}],235:[function(require,module,exports){
+},{"flux":32}],238:[function(require,module,exports){
 var routes = require('./routes')
 var InitializeActions = require('./actions/initializeActions')
 
@@ -51239,7 +51436,7 @@ ReactDOM.render(
   document.getElementById('content')
 )
 
-},{"./actions/initializeActions":223,"./routes":236}],236:[function(require,module,exports){
+},{"./actions/initializeActions":223,"./routes":239}],239:[function(require,module,exports){
 var Router = require('react-router').Router
 var Route = require('react-router').Route;
 var hashHistory = require('react-router').hashHistory
@@ -51250,11 +51447,11 @@ var Profile = require('./components/profile/profilepage')
 var Chat = require('./components/conversation/alluserschat')
 var IndividualChat = require('./components/conversation/individualchat')
 
-var routes = (  
+var routes = (
   React.createElement(Router, {history: hashHistory}, 
     React.createElement(Route, {path: "/", component: App}), 
     React.createElement(Route, {path: "profile/:userid", component: Profile}), 
-    React.createElement(Route, {path: "chat/:userid", component: IndividualChat}), 
+    React.createElement(Route, {path: "conversation/:receiverid/:userid", component: IndividualChat}), 
     React.createElement(Route, {path: "chat/all/:userid", component: Chat}), 
     React.createElement(Route, {path: "*", component: PageNotFound}), 
     React.createElement(Route, {path: "*/*", component: PageNotFound})
@@ -51265,7 +51462,71 @@ var routes = (
 
 module.exports = routes;
 
-},{"./components/app":225,"./components/common/pagenotfound":226,"./components/conversation/alluserschat":227,"./components/conversation/individualchat":229,"./components/login":230,"./components/profile/profilepage":231,"react-router":84}],237:[function(require,module,exports){
+},{"./components/app":226,"./components/common/pagenotfound":227,"./components/conversation/alluserschat":228,"./components/conversation/individualchat":232,"./components/login":233,"./components/profile/profilepage":234,"react-router":84}],240:[function(require,module,exports){
+var Dispatcher = require('../dispatcher/appDispatcher')
+var ActionType = require('../constants/actionTypes')
+var EventEmitter = require('events').EventEmitter
+var Assign = require('object-assign')
+var CHANGE_EVENT = 'change';
+var _messages = [];
+var _ = require('lodash');
+
+var MessageStore = Assign({}, EventEmitter.prototype, {
+  addChangeListener: function(callback) {
+    this.on(CHANGE_EVENT, callback);
+  },
+
+  removeChangeListener: function(callback) {
+    this.removeListener(CHANGE_EVENT, callback);
+  },
+
+  emitChange: function() {
+    this.emit(CHANGE_EVENT);
+  },
+
+  getAllMessages: function() {
+    return _messages;
+  },
+
+  getConvo: function(receiver, sender) {
+    emptyArray = []
+      var receiverMessages =  _.find(_messages, {receiver_id: receiver})
+      for (var i = 0; i < _messages.length; i++) {
+        var iteration = _messages[i]
+        if (iteration.receiver_id == receiver && iteration.sender_id == sender) {
+          emptyArray.push(iteration)
+        }
+        else if (iteration.receiver_id == sender && iteration.sender_id == receiver) {
+          emptyArray.push(iteration)
+        }
+      }
+
+      return emptyArray
+    }
+
+});
+
+
+
+Dispatcher.register(function(action){
+  switch(action.actionType){
+    case ActionType.INITIALIZE:
+
+      _messages = action.initialData.messages
+      MessageStore.emitChange()
+      break;
+    case ActionType.SUBMIT_COMMENT:
+      _messages.push(action.message)
+      break;
+
+  }
+
+})
+
+
+module.exports = MessageStore;
+
+},{"../constants/actionTypes":236,"../dispatcher/appDispatcher":237,"events":4,"lodash":53,"object-assign":54}],241:[function(require,module,exports){
 var Dispatcher = require('../dispatcher/appDispatcher')
 var ActionType = require('../constants/actionTypes')
 var EventEmitter = require('events').EventEmitter
@@ -51305,11 +51566,11 @@ Dispatcher.register(function(action){
 
   switch(action.actionType){
     case ActionType.INITIALIZE:
-
+      console.log('loaded dude');
       _users = action.initialData.users
       UserStore.emitChange()
-
       break;
+
     case ActionType.CREATE_USER:
       if(action.user!= 'success') {
         _users.push(action.user)
@@ -51336,4 +51597,4 @@ Dispatcher.register(function(action){
 
 module.exports = UserStore;
 
-},{"../constants/actionTypes":233,"../dispatcher/appDispatcher":234,"events":4,"lodash":53,"object-assign":54}]},{},[235]);
+},{"../constants/actionTypes":236,"../dispatcher/appDispatcher":237,"events":4,"lodash":53,"object-assign":54}]},{},[238]);

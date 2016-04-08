@@ -17,7 +17,6 @@ Api.route('/')
 
 Api.route('/create')
   .post(function(req, res, next) {
-    console.log('This is the id '+ req.body.id);
     var picture = 'picture[data][url]'
     var reqbody = req.body
     var newUser = {
@@ -48,9 +47,7 @@ Api.route('/find')
     console.log(req.body)
     var derp = Number(req.body.userid)
     Users().select().where({fb_id: derp}).first().then(function(result){
-      console.log("what im looking for");
-      console.log(result);
-      console.log('found');
+
       res.json(result)
     })
   })

@@ -1,7 +1,7 @@
 var Dispatcher = require('../dispatcher/appDispatcher')
 var ActionTypes = require('../constants/actionTypes')
 
-InitializeActions = {
+InitializeActions = {  
   initApp: function() {
     $.ajax({
       type: "GET",

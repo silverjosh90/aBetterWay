@@ -3,6 +3,8 @@ exports.up = function(knex, Promise) {
     table.string('message');
     table.string('sender_id');
     table.string('receiver_id');
+    table.bigint('Date')
+    table.boolean('seen')
   })
 };
 

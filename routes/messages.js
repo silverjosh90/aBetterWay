@@ -15,14 +15,25 @@ Api.route('/')
     })
   })
 
-Api.route('/create')
+Api.route('/submit')
   .post(function(req, res, next) {
+    var body = req.body
+    var text='message[text]'
+    console.log(body);
+    console.log(body[text]);
+    messageObj = {
+      message: body[text],
+      sender_id: req.body.sender_id,
+      receiver_id: req.body.receiver_id,
+      seen: false,
+      Date: req.body.date
+    }
+    Messages().insert(messageObj).then(function(results){
+      console.log(messageObj);
+      res.json(messageObj)
+    })
 
 });
 
-Api.route('/find')
-  .post(function(req,res){
-
-  })
 
 module.exports = Api;

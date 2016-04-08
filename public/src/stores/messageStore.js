@@ -6,7 +6,7 @@ var CHANGE_EVENT = 'change';
 var _messages = [];
 var _ = require('lodash');
 
-var UserStore = Assign({}, EventEmitter.prototype, {
+var MessageStore = Assign({}, EventEmitter.prototype, {
   addChangeListener: function(callback) {
     this.on(CHANGE_EVENT, callback);
   },
@@ -20,13 +20,23 @@ var UserStore = Assign({}, EventEmitter.prototype, {
   },
 
   getAllMessages: function() {
-
     return _messages;
   },
 
-  getMessagesById: function(id) {
+  getConvo: function(receiver, sender) {
+    emptyArray = []
+      var receiverMessages =  _.find(_messages, {receiver_id: receiver})
+      for (var i = 0; i < _messages.length; i++) {
+        var iteration = _messages[i]
+        if (iteration.receiver_id == receiver && iteration.sender_id == sender) {
+          emptyArray.push(iteration)
+        }
+        else if (iteration.receiver_id == sender && iteration.sender_id == receiver) {
+          emptyArray.push(iteration)
+        }
+      }
 
-      return _.find(_messages, {fb_id: id})
+      return emptyArray
     }
 
 });
@@ -34,12 +44,14 @@ var UserStore = Assign({}, EventEmitter.prototype, {
 
 
 Dispatcher.register(function(action){
-
   switch(action.actionType){
     case ActionType.INITIALIZE:
-      console.log('looking!');
+
       _messages = action.initialData.messages
-      UserStore.emitChange()
+      MessageStore.emitChange()
+      break;
+    case ActionType.SUBMIT_COMMENT:
+      _messages.push(action.message)
       break;
 
   }
@@ -47,4 +59,4 @@ Dispatcher.register(function(action){
 })
 
 
-module.exports = UserStore;
+module.exports = MessageStore;

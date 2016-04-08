@@ -7,6 +7,7 @@ var Link = require('react-router').Link
 var Router = require('react-router')
 var hashHistory= Router.hashHistory
 var UserStore = require('../stores/userStore')
+var MessageStore = require('../stores/messageStore')
 var UserActions = require('../actions/userActions')
 var toastr = require('toastr')
 
@@ -14,20 +15,24 @@ var toastr = require('toastr')
 var App = React.createClass({
   getInitialState: function() {
     return {
-      users: {}
+      users: {},
+      messages: {}
     }
   },
   componentWillMount: function() {
     UserStore.addChangeListener(this._onChange)
+    MessageStore.addChangeListener(this._onChange)
   },
   componentWillUnmount: function() {
     UserStore.removeChangeListener(this._onChange)
+    MessageStore.removeChangeListener(this._onChange)
     // this.setState({users: UserStore.getUserById(this.props.params.userid)})
   // console.log('hello there ' + this.state.users);
   },
   _onChange: function() {
-    var derp = UserStore.getAllUsers()
-    this.setState({users: derp})
+    var getting_users = UserStore.getAllUsers()
+    var message = MessageStore.getAllMessages()
+    this.setState({users: getting_users})
 
 
   },

@@ -8,11 +8,11 @@ var Profile = require('./components/profile/profilepage')
 var Chat = require('./components/conversation/alluserschat')
 var IndividualChat = require('./components/conversation/individualchat')
 
-var routes = (  
+var routes = (
   <Router history={hashHistory}>
-    <Route path="/" component={App} />
+    <Route path="/" component={App} />   
     <Route path="profile/:userid" component={Profile} />
-    <Route path="chat/:userid" component={IndividualChat} />
+    <Route path="conversation/:receiverid/:userid" component={IndividualChat} />
     <Route path="chat/all/:userid" component={Chat} />
     <Route path="*" component={PageNotFound} />
     <Route path="*/*" component={PageNotFound} />
