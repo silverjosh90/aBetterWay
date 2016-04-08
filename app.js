@@ -66,5 +66,15 @@ app.use(function(err, req, res, next) {
   });
 });
 
+// io.on('connection', function (socket) {
+//
+//   // when the client emits 'new message', this listens and executes
+//   socket.on('new comment', function (data) {
+//     socket.broadcast.emit('new comment', {
+//
+//       // username: socket.username,
+//       // message: data
+//     });
+//   });
 
 module.exports = app;

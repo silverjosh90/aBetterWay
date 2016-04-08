@@ -3,8 +3,7 @@ var CommentDisplay = React.createClass({
   userpic= this.props.userprofilepicture
   friendpic= this.props.friendprofilepicture
   userid = this.props.paramid
-  {console.log('here is my state')}
-  {console.log(this.props.messages)}
+
   var displayMessages = this.props.messages.map(function(comment){
 
     if (comment.sender_id == userid) {

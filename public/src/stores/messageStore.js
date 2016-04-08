@@ -5,6 +5,7 @@ var Assign = require('object-assign')
 var CHANGE_EVENT = 'change';
 var _messages = [];
 var _ = require('lodash');
+var io = require('../../../io.js')
 
 var MessageStore = Assign({}, EventEmitter.prototype, {
   addChangeListener: function(callback) {

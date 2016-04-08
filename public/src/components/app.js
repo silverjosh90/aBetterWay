@@ -37,7 +37,6 @@ var App = React.createClass({
 
   },
   responseFacebook: function(response) {
-    console.log(response);
       UserActions.createUser(response)
       hashHistory.push('/profile/' + response.id)
       toastr.success('Thanks for logging in ' + response.first_name + "!" )

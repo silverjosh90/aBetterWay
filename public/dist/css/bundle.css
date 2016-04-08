@@ -19,6 +19,10 @@ h2 {
   display: flex;
 }
 
+.commentDisplay {
+  overflow-y:visible;
+}
+
 .blurBackground {
   display: flex;
   flex-direction: column;

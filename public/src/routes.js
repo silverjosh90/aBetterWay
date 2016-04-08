@@ -6,11 +6,11 @@ var PageNotFound = require('./components/common/pagenotfound')
 var Login = require('./components/login')
 var Profile = require('./components/profile/profilepage')
 var Chat = require('./components/conversation/alluserschat')
-var IndividualChat = require('./components/conversation/individualchat')
+var IndividualChat = require('./components/conversation/individualchat')   
 
 var routes = (
   <Router history={hashHistory}>
-    <Route path="/" component={App} />   
+    <Route path="/" component={App} />
     <Route path="profile/:userid" component={Profile} />
     <Route path="conversation/:receiverid/:userid" component={IndividualChat} />
     <Route path="chat/all/:userid" component={Chat} />

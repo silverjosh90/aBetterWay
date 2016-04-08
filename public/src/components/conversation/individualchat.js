@@ -4,6 +4,8 @@ var UserStore= require('../../stores/userStore')
 var MessageAction = require('../../actions/messageActions')
 var CommentForm = require('./commentform')
 var CommentDisplay = require('./commentDisplay')
+var pollInterval = 100
+
 var IndividualChat= React.createClass({
   getInitialState: function() {
     return {
@@ -22,6 +24,28 @@ componentWillUnmount: function() {
 // console.log('hello there ' + this.state.users);
 },
 
+loadCommentsFromServer() {
+
+this.setState({messages:MessageStore.getConvo(this.props.params.receiverid, this.props.params.userid)})
+
+
+},
+componentDidMount: function() {
+  this.scrolled()
+  this.loadCommentsFromServer()
+  setInterval(this.loadCommentsFromServer, pollInterval);
+    // this.createSocket().emit('new comment', message)
+},
+// createSocket: function() {
+//   var socket = io()
+//   return socket
+// },
+
+﻿
+scrolled: function() {
+  return window.scrollTo(0, 50000)
+},
+
 _onChange: function(comment) {
   fullComment = {
     message: comment,
@@ -29,6 +53,11 @@ _onChange: function(comment) {
     receiver_id: this.props.params.receiverid,
     date: Date.now()
   }
+  // var that = this;
+  // this.socket = io();
+  // this.socket.on(function(){
+  //   that.setState({messages:MessageStore.getConvo(this.props.params.receiverid, this.props.params.userid)})
+  // })
   MessageAction.submitComment(fullComment)
   // var newMessages = this.state.messages
   // console.log('this is the new message breh');
@@ -39,6 +68,8 @@ _onChange: function(comment) {
   // pushed = newMessages.push(finalComment)
   var messaged = MessageStore.getConvo(this.props.params.receiverid, this.props.params.userid)
   this.setState({messages: messaged})
+
+  window.setTimeout(this.scrolled , 120)
 
 
 
@@ -83,14 +114,14 @@ _onChange: function(comment) {
     //     </div>
     //
     //   )
-    // })
-    {console.log(this.state.user)}
-    {console.log(this.state.friend)}
+    // })``
     return (
       <div>
-      <p>Haha Hehe</p>
-      <CommentDisplay key='derp' userprofilepicture={userpic} friendprofilepicture={friendpic} paramid={userid} messages={this.state.messages} />
+      <div className="commentDisplay">
+      <CommentDisplay key='derp' userprofilepicture={userpic} friendprofilepicture={friendpic} paramid={userid}
+     messages={this.state.messages} />
       <CommentForm onCommentSubmit={this._onChange} />
+      </div>
       </div>
     )
   }
