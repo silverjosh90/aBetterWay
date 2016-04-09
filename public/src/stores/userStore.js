@@ -37,7 +37,6 @@ Dispatcher.register(function(action){
 
   switch(action.actionType){
     case ActionType.INITIALIZE:
-      console.log('loaded dude');
       _users = action.initialData.users
       UserStore.emitChange()
       break;

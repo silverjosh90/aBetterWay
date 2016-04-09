@@ -8,7 +8,9 @@ var Router = require('react-router')
 var hashHistory= Router.hashHistory
 var UserStore = require('../stores/userStore')
 var MessageStore = require('../stores/messageStore')
+var ProfileinfoStore = require('../stores/profileInfoStore')
 var UserActions = require('../actions/userActions')
+var ProfileInfoActions = require('../actions/profileInfoActions')
 var toastr = require('toastr')
 
 
@@ -22,9 +24,11 @@ var App = React.createClass({
   componentWillMount: function() {
     UserStore.addChangeListener(this._onChange)
     MessageStore.addChangeListener(this._onChange)
+    ProfileinfoStore.addChangeListener(this._onChange)
   },
   componentWillUnmount: function() {
     UserStore.removeChangeListener(this._onChange)
+    ProfileinfoStore.removeChangeListener(this._onChange)
     MessageStore.removeChangeListener(this._onChange)
     // this.setState({users: UserStore.getUserById(this.props.params.userid)})
   // console.log('hello there ' + this.state.users);
@@ -37,6 +41,7 @@ var App = React.createClass({
 
   },
   responseFacebook: function(response) {
+      ProfileInfoActions.createProfile(response.id)
       UserActions.createUser(response)
       hashHistory.push('/profile/' + response.id)
       toastr.success('Thanks for logging in ' + response.first_name + "!" )

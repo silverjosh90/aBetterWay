@@ -3,6 +3,7 @@ var ActionTypes = require('../constants/actionTypes')
 
 var UserActions = {
   createUser: function(user) {
+    console.log('getting here to user actions');
     var checkOrCreate =
 $.ajax({
   type: "POST",

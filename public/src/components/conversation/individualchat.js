@@ -20,6 +20,7 @@ componentWillMount: function() {
 },
 componentWillUnmount: function() {
   MessageStore.removeChangeListener(this._onChange)
+  clearInterval(interval)
   // this.setState({users: UserStore.getUserById(this.props.params.userid)})
 // console.log('hello there ' + this.state.users);
 },
@@ -33,7 +34,7 @@ this.setState({messages:MessageStore.getConvo(this.props.params.receiverid, this
 componentDidMount: function() {
   this.scrolled()
   this.loadCommentsFromServer()
-  setInterval(this.loadCommentsFromServer, pollInterval);
+  var interval = setInterval(this.loadCommentsFromServer, pollInterval);
     // this.createSocket().emit('new comment', message)
 },
 // createSocket: function() {

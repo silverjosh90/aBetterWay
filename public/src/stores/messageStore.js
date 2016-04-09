@@ -5,7 +5,6 @@ var Assign = require('object-assign')
 var CHANGE_EVENT = 'change';
 var _messages = [];
 var _ = require('lodash');
-var io = require('../../../io.js')
 
 var MessageStore = Assign({}, EventEmitter.prototype, {
   addChangeListener: function(callback) {
@@ -47,7 +46,6 @@ var MessageStore = Assign({}, EventEmitter.prototype, {
 Dispatcher.register(function(action){
   switch(action.actionType){
     case ActionType.INITIALIZE:
-
       _messages = action.initialData.messages
       MessageStore.emitChange()
       break;
