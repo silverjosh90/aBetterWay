@@ -14,6 +14,15 @@ Api.route('/')
       res.json(results)
     })
   })
+Api.route('/seen')
+  .post(function(req,res){
+    console.log(req.body.sender);
+    console.log(req.body.receiver);
+    Messages().update({seen: true}).where({sender_id: req.body.receiver, receiver_id: req.body.sender}).then(function(results){
+      console.log(results);
+      res.json(results)
+    })
+  })
 
 Api.route('/submit')
   .post(function(req, res, next) {

@@ -19,7 +19,7 @@ var ProfileinfoStore = Assign({}, EventEmitter.prototype, {
     this.emit(CHANGE_EVENT);
   },
 
-  getAllMessages: function() {
+  getAllProfiles: function() {
     return _profileinfo;
   },
 

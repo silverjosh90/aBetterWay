@@ -1,17 +1,21 @@
 
 var MessageStore= require('../../stores/messageStore')
+var ProfileinfoStore= require('../../stores/profileInfoStore')
 var UserStore= require('../../stores/userStore')
 var MessageAction = require('../../actions/messageActions')
 var CommentForm = require('./commentform')
 var CommentDisplay = require('./commentDisplay')
-var pollInterval = 100
+var pollInterval = 100;
+var InitiateChat = require('./initiateChat')
 
 var IndividualChat= React.createClass({
   getInitialState: function() {
+
     return {
-      messages: MessageStore.getConvo(this.props.params.receiverid, this.props.params.userid),
+      messages: this.sortComments(MessageStore.getConvo(this.props.params.receiverid, this.props.params.userid)),
       user: UserStore.getUserById(this.props.params.userid),
       friend: UserStore.getUserById(this.props.params.receiverid),
+      profileInfo: ProfileinfoStore.getProfileInfo(this.props.params.receiverid)
   }
 },
 
@@ -25,23 +29,35 @@ componentWillUnmount: function() {
 // console.log('hello there ' + this.state.users);
 },
 
+sortComments: function(array) {
+    for(var i =0; i < array.length; i++) {
+        minIndx = i
+        minVal = array[i].date
+        var j = i + 1
+        while(j < array.length) {
+            if(minVal > array[j].date) {
+                minIndx = j
+                minVal = array[j].date
+            }
+            j+=1
+        }
+        temp = array[i]
+        array[i] = array[minIndx]
+        array[minIndx] = temp
+
+    }
+    return array
+},
+
 loadCommentsFromServer() {
-
-this.setState({messages:MessageStore.getConvo(this.props.params.receiverid, this.props.params.userid)})
-
+this.setState({messages: MessageStore.getConvo(this.props.params.receiverid, this.props.params.userid)})
 
 },
 componentDidMount: function() {
   this.scrolled()
   this.loadCommentsFromServer()
   var interval = setInterval(this.loadCommentsFromServer, pollInterval);
-    // this.createSocket().emit('new comment', message)
 },
-// createSocket: function() {
-//   var socket = io()
-//   return socket
-// },
-
 ﻿
 scrolled: function() {
   return window.scrollTo(0, 50000)
@@ -54,44 +70,16 @@ _onChange: function(comment) {
     receiver_id: this.props.params.receiverid,
     date: Date.now()
   }
-  // var that = this;
-  // this.socket = io();
-  // this.socket.on(function(){
-  //   that.setState({messages:MessageStore.getConvo(this.props.params.receiverid, this.props.params.userid)})
-  // })
+
+  if(fullComment.message !== '' && fullComment.message !== undefined) {
   MessageAction.submitComment(fullComment)
-  // var newMessages = this.state.messages
-  // console.log('this is the new message breh');
-  // console.log(newMessages);
-  // fullComment.id = Date.now()
-  // console.log(JSON.stringify(fullComment));
-  // var finalComment  = JSON.stringify(fullComment)
-  // pushed = newMessages.push(finalComment)
+}
+  MessageAction.commentSeen(fullComment.sender_id, fullComment.receiver_id)
+
   var messaged = MessageStore.getConvo(this.props.params.receiverid, this.props.params.userid)
   this.setState({messages: messaged})
 
   window.setTimeout(this.scrolled , 120)
-
-
-
-
-  // var comments = this.state.data;
-  // comment.id = Date.now()
-  // var newComments = comments.concat([comment])
-  // this.setState({data: newComments});
-  // $.ajax({
-  //   url: this.props.url,
-  //   dataType: 'json',
-  //   type: 'POST',
-  //   data: comment,
-  //   succes: function(data){
-  //     this.setState({data: data});
-  //   }.bind(this),
-  //   error: function(xhr, status, err) {
-  //     this.setState({data: comments});
-  //     console.error(this.props.url, status, err.toString())
-  //   }.bind(this)
-  // });
 
 },
 
@@ -99,23 +87,11 @@ _onChange: function(comment) {
     userpic = this.state.user.profilepicture
     friendpic = this.state.friend.profilepicture
     userid = this.props.params.userid
-    // var displayMessages = this.state.messages.map(function(comment){
-    //   {displayMessages}
-    //   if (comment.sender_id == userid) {
-    //     picture = userpic
-    //   }
-    //   else {
-    //     picture = friendpic
-    //   }
-    //   return(
-    //
-    //     <div className="chatMessage">
-    //     <img className="chatPic" src={picture}/>
-    //     <p className="chatComment">{comment.message}</p>
-    //     </div>
-    //
-    //   )
-    // })``
+    if(!this.state.messages.length) {
+      return (
+        <InitiateChat profile={this.state.profileInfo} userinfo={this.state.friend} />
+      )
+    }
     return (
       <div>
       <div className="commentDisplay">
