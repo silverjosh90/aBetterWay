@@ -34,15 +34,29 @@ InitializeActions = {
                       console.log(thrownError)
               },
               success: function(profinfo) {
-          
+                $.ajax({
+                  type: "GET",
+                  url: 'http://localhost:3000/profileanswers',
+                  dataType: 'json',
+                  cache: false,
+                  error: function (xhr, ajaxOptions, thrownError) {
+                          console.log(xhr);
+                          console.log(thrownError)
+
+                  },
+                  success: function(profanswer) {
+                    console.log(profanswer);
         Dispatcher.dispatch({
           actionType: ActionTypes.INITIALIZE,
           initialData: {
             users: data,
             profileinfo: profinfo,
-            messages: info
+            messages: info,
+            profileanswer: profanswer
           }
         })
+      }
+      })
       }
       })
       }

@@ -127,10 +127,18 @@ var App = React.createClass({
     return (
       <div className="derp">
 
+        <div className="headerTemplate">
+          <div className="navButtons home">home</div>
+          <div className="navButtons chat">chat</div>
+          <div className="navButtons profile">profile</div>
+          <div className="navButtons logout">logout</div>
+        </div>
+        
         <div className="splashImg">
+        <div className='logo'><i className="fa fa-map-o" aria-hidden="true"></i></div>
           <div className="blurBackground">
-            <h2 className="pageTitle">The New Kid In Town</h2>
-            <button className="btn btn-primary" onClick={this.click}> Log in with Facebook</button>
+            <h2 className="pageTitle">new kid in town</h2>
+            <button className="fbLoginButton btn btn-primary" onClick={this.click}>facebook login</button>
           </div>
         </div>
        </div>

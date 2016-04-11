@@ -1,6 +1,7 @@
 
 var MessageStore= require('../../stores/messageStore')
 var ProfileinfoStore= require('../../stores/profileInfoStore')
+var ProfileAnswersStore= require('../../stores/profileAnswersStore')
 var UserStore= require('../../stores/userStore')
 var MessageAction = require('../../actions/messageActions')
 var CommentForm = require('./commentform')
@@ -9,10 +10,12 @@ var pollInterval = 100;
 var InitiateChat = require('./initiateChat')
 var hashHistory = require('react-router').hashHistory
 var ProfileAnswersActions = require('../../actions/profileAnswersActions')
+var interval = setInterval(this.loadCommentsFromServer, pollInterval);
+
 
 var IndividualChat= React.createClass({
   getInitialState: function() {
-
+    console.log(ProfileAnswersStore.getAnswers(this.props.params.userid, this.props.params.receiverid));
     return {
       messages: this.sortComments(MessageStore.getConvo(this.props.params.receiverid, this.props.params.userid)),
       user: UserStore.getUserById(this.props.params.userid),
@@ -86,7 +89,6 @@ this.setState({messages: MessageStore.getConvo(this.props.params.receiverid, thi
 componentDidMount: function() {
   this.scrolled()
   this.loadCommentsFromServer()
-  var interval = setInterval(this.loadCommentsFromServer, pollInterval);
 },
 ﻿
 scrolled: function() {
@@ -117,7 +119,7 @@ _onChange: function(comment) {
     userpic = this.state.user.profilepicture
     friendpic = this.state.friend.profilepicture
     userid = this.props.params.userid
-    if(!this.state.messages.length) {
+    if(!ProfileAnswersStore.getAnswers(this.props.params.userid, this.props.params.receiverid).length) {
       return (
         <InitiateChat profile={this.state.profileInfo} onSave={this.formSubmitted} onType={this.setQuestionChange} userinfo={this.state.friend} />
       )

@@ -7,6 +7,14 @@ var knex = require('../db/knex')
 function ProfileAnswers() {
   return knex('profileanswers')
 }
+Api.route('/')
+  .get(function(req,res){
+    ProfileAnswers().select().then(function(results){
+      console.log('profile answer results');
+      console.log(results);
+      res.json(results)
+    })
+  })
 
 Api.route('/answers')
   .post(function(req,res){

@@ -62,15 +62,14 @@ render: function() {
   }
 else {
 return(
-
-  <div>
-  <h1>Welcome to the road Ahead {this.state.person.firstname}</h1>
-    <UserInfo profilepicture={this.state.person.profilepicture} firstname={this.state.person.firstname} lastname={this.state.person.lastname}
-      profinfo={this.state.profileInfo}/>
-    <Link to={`profile/edit/${this.state.person.fb_id}`}> Edit Profile </Link>
-    <br />
-    <Link to={`chat/all/${this.state.person.fb_id}`}> Chat with friends~~! </Link>
-   </div>
+<div className='profPage'>
+  <h1 className='welcomeMessage'>Welcome,<p className='yourName'>{this.state.person.firstname}</p></h1>
+  <div className='profPic'><UserInfo profilepicture={this.state.person.profilepicture} firstname={this.state.person.firstname} lastname={this.state.person.lastname} profinfo={this.state.profileInfo} />
+  </div>
+  <Link className='editLink' to={`profile/edit/${this.state.person.fb_id}`}>edit profile</Link>
+  <br />
+  <Link className='chatLink' to={`chat/all/${this.state.person.fb_id}`}>chat with friends!</Link>
+</div>
 )
 }
 }

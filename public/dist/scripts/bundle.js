@@ -54461,15 +54461,29 @@ InitializeActions = {
                       console.log(thrownError)
               },
               success: function(profinfo) {
-          
+                $.ajax({
+                  type: "GET",
+                  url: 'http://localhost:3000/profileanswers',
+                  dataType: 'json',
+                  cache: false,
+                  error: function (xhr, ajaxOptions, thrownError) {
+                          console.log(xhr);
+                          console.log(thrownError)
+
+                  },
+                  success: function(profanswer) {
+                    console.log(profanswer);
         Dispatcher.dispatch({
           actionType: ActionTypes.INITIALIZE,
           initialData: {
             users: data,
             profileinfo: profinfo,
-            messages: info
+            messages: info,
+            profileanswer: profanswer
           }
         })
+      }
+      })
       }
       })
       }
@@ -54804,11 +54818,17 @@ var App = React.createClass({displayName: "App",
   render: function() {
     return (
       React.createElement("div", {className: "derp"}, 
-
+        React.createElement("div", {className: "headerTemplate"}, 
+          React.createElement("div", {className: "navButtons home"}, "home"), 
+          React.createElement("div", {className: "navButtons chat"}, "chat"), 
+          React.createElement("div", {className: "navButtons profile"}, "profile"), 
+          React.createElement("div", {className: "navButtons logout"}, "logout")
+        ), 
         React.createElement("div", {className: "splashImg"}, 
+        React.createElement("div", {className: "logo"}, React.createElement("i", {className: "fa fa-map-o", "aria-hidden": "true"})), 
           React.createElement("div", {className: "blurBackground"}, 
-            React.createElement("h2", {className: "pageTitle"}, "The New Kid In Town"), 
-            React.createElement("button", {className: "btn btn-primary", onClick: this.click}, " Log in with Facebook")
+            React.createElement("h2", {className: "pageTitle"}, "new kid in town"), 
+            React.createElement("button", {className: "fbLoginButton btn btn-primary", onClick: this.click}, "facebook login")
           )
         )
        )
@@ -54819,7 +54839,7 @@ var App = React.createClass({displayName: "App",
 
 module.exports = App
 
-},{"../actions/profileInfoActions":227,"../actions/userActions":228,"../stores/messageStore":248,"../stores/profileInfoStore":249,"../stores/userStore":250,"jquery":52,"react":220,"react-router":85,"toastr":222}],230:[function(require,module,exports){
+},{"../actions/profileInfoActions":227,"../actions/userActions":228,"../stores/messageStore":248,"../stores/profileInfoStore":250,"../stores/userStore":251,"jquery":52,"react":220,"react-router":85,"toastr":222}],230:[function(require,module,exports){
 var Link = require('react-router').Link
 
 var PageNotFound = React.createClass({displayName: "PageNotFound",
@@ -54867,7 +54887,7 @@ var Chat = React.createClass({displayName: "Chat",
 
 module.exports = Chat
 
-},{"../../stores/userStore":250,"./displayallusers":235}],232:[function(require,module,exports){
+},{"../../stores/userStore":251,"./displayallusers":235}],232:[function(require,module,exports){
 var ChatEditFields  = React.createClass({displayName: "ChatEditFields",
   render: function() {
     return (
@@ -54983,6 +55003,7 @@ module.exports = DisplayAllUsers
 
 var MessageStore= require('../../stores/messageStore')
 var ProfileinfoStore= require('../../stores/profileInfoStore')
+var ProfileAnswersStore= require('../../stores/profileAnswersStore')
 var UserStore= require('../../stores/userStore')
 var MessageAction = require('../../actions/messageActions')
 var CommentForm = require('./commentform')
@@ -54991,10 +55012,12 @@ var pollInterval = 100;
 var InitiateChat = require('./initiateChat')
 var hashHistory = require('react-router').hashHistory
 var ProfileAnswersActions = require('../../actions/profileAnswersActions')
+var interval = setInterval(this.loadCommentsFromServer, pollInterval);
+
 
 var IndividualChat= React.createClass({displayName: "IndividualChat",
   getInitialState: function() {
-
+    console.log(ProfileAnswersStore.getAnswers(this.props.params.userid, this.props.params.receiverid));
     return {
       messages: this.sortComments(MessageStore.getConvo(this.props.params.receiverid, this.props.params.userid)),
       user: UserStore.getUserById(this.props.params.userid),
@@ -55068,7 +55091,6 @@ this.setState({messages: MessageStore.getConvo(this.props.params.receiverid, thi
 componentDidMount: function() {
   this.scrolled()
   this.loadCommentsFromServer()
-  var interval = setInterval(this.loadCommentsFromServer, pollInterval);
 },
 ﻿
 scrolled: function() {
@@ -55099,7 +55121,7 @@ _onChange: function(comment) {
     userpic = this.state.user.profilepicture
     friendpic = this.state.friend.profilepicture
     userid = this.props.params.userid
-    if(!this.state.messages.length) {
+    if(!ProfileAnswersStore.getAnswers(this.props.params.userid, this.props.params.receiverid).length) {
       return (
         React.createElement(InitiateChat, {profile: this.state.profileInfo, onSave: this.formSubmitted, onType: this.setQuestionChange, userinfo: this.state.friend})
       )
@@ -55118,7 +55140,7 @@ _onChange: function(comment) {
 
 module.exports = IndividualChat
 
-},{"../../actions/messageActions":225,"../../actions/profileAnswersActions":226,"../../stores/messageStore":248,"../../stores/profileInfoStore":249,"../../stores/userStore":250,"./commentDisplay":233,"./commentform":234,"./initiateChat":237,"react-router":85}],237:[function(require,module,exports){
+},{"../../actions/messageActions":225,"../../actions/profileAnswersActions":226,"../../stores/messageStore":248,"../../stores/profileAnswersStore":249,"../../stores/profileInfoStore":250,"../../stores/userStore":251,"./commentDisplay":233,"./commentform":234,"./initiateChat":237,"react-router":85}],237:[function(require,module,exports){
 var ChatEditFields = require('./chatEditFields')
 
 var InitiateChat = React.createClass({displayName: "InitiateChat",
@@ -55329,7 +55351,7 @@ var ProfileForm = React.createClass({displayName: "ProfileForm",
 
 module.exports = ProfileForm
 
-},{"../../actions/profileInfoActions":227,"../../stores/profileInfoStore":249,"../../stores/userStore":250,"./profileFormSection":241,"react-router":85,"toastr":222}],241:[function(require,module,exports){
+},{"../../actions/profileInfoActions":227,"../../stores/profileInfoStore":250,"../../stores/userStore":251,"./profileFormSection":241,"react-router":85,"toastr":222}],241:[function(require,module,exports){
 var ProfileEditFields = require('./ProfileEditFields')
 var ProfileFormSection = React.createClass({displayName: "ProfileFormSection",
 // var name;
@@ -55423,14 +55445,14 @@ render: function() {
 else {
 return(
 
-  React.createElement("div", null, 
-  React.createElement("h1", null, "Welcome to the road Ahead ", this.state.person.firstname), 
-    React.createElement(UserInfo, {profilepicture: this.state.person.profilepicture, firstname: this.state.person.firstname, lastname: this.state.person.lastname, 
-      profinfo: this.state.profileInfo}), 
-    React.createElement(Link, {to: `profile/edit/${this.state.person.fb_id}`}, " Edit Profile "), 
-    React.createElement("br", null), 
-    React.createElement(Link, {to: `chat/all/${this.state.person.fb_id}`}, " Chat with friends~~! ")
-   )
+React.createElement("div", {className: "profPage"}, 
+  React.createElement("h1", {className: "welcomeMessage"}, "Welcome,", React.createElement("p", {className: "yourName"}, this.state.person.firstname)), 
+  React.createElement("div", {className: "profPic"}, React.createElement(UserInfo, {profilepicture: this.state.person.profilepicture, firstname: this.state.person.firstname, lastname: this.state.person.lastname, 
+    profinfo: this.state.profileInfo})), 
+  React.createElement(Link, {className: "editLink", to: `profile/edit/${this.state.person.fb_id}`}, " Edit Profile "), 
+  React.createElement("br", null), 
+  React.createElement(Link, {className: "chatLink", to: `chat/all/${this.state.person.fb_id}`}, " Chat with friends~~! ")
+)
 )
 }
 }
@@ -55439,7 +55461,7 @@ return(
 
 module.exports = Profile
 
-},{"../../actions/userActions":228,"../../stores/profileInfoStore":249,"../../stores/userStore":250,"./userinfo":243,"react-router":85}],243:[function(require,module,exports){
+},{"../../actions/userActions":228,"../../stores/profileInfoStore":250,"../../stores/userStore":251,"./userinfo":243,"react-router":85}],243:[function(require,module,exports){
 
 
 UserInfo = React.createClass({displayName: "UserInfo",
@@ -55447,25 +55469,23 @@ UserInfo = React.createClass({displayName: "UserInfo",
     return (
     React.createElement("div", null, 
       React.createElement("img", {src: this.props.profilepicture}), 
-      React.createElement("p", null, " Hello ", this.props.firstname, " ", this.props.lastname, " "), 
-
-
-      React.createElement("h3", null, "Bio"), 
-      React.createElement("p", null, " ", this.props.profinfo.Bio, " "), 
-      React.createElement("br", null), 
-
-      React.createElement("h3", null, "Question 1"), 
-      React.createElement("p", null, " ", this.props.profinfo.question1, " "), 
+      React.createElement("div", {className: "profInfoDiv"}, 
+        React.createElement("h3", null, "Bio"), 
+        React.createElement("p", null, " ", this.props.profinfo.Bio, " "), 
         React.createElement("br", null), 
-      React.createElement("h3", null, "Question 2"), 
-      React.createElement("p", null, " ", this.props.profinfo.question2, " "), 
-        React.createElement("br", null), 
-      React.createElement("h3", null, "Question 3"), 
-      React.createElement("p", null, " ", this.props.profinfo.question3, " "), 
-        React.createElement("br", null), 
-      React.createElement("h3", null, "Question 4"), 
-      React.createElement("p", null, " ", this.props.profinfo.question4, " ")
 
+        React.createElement("h3", null, "Question 1"), 
+        React.createElement("p", null, " ", this.props.profinfo.question1, " "), 
+          React.createElement("br", null), 
+        React.createElement("h3", null, "Question 2"), 
+        React.createElement("p", null, " ", this.props.profinfo.question2, " "), 
+          React.createElement("br", null), 
+        React.createElement("h3", null, "Question 3"), 
+        React.createElement("p", null, " ", this.props.profinfo.question3, " "), 
+          React.createElement("br", null), 
+        React.createElement("h3", null, "Question 4"), 
+        React.createElement("p", null, " ", this.props.profinfo.question4, " ")
+      )
     )
   )
   }
@@ -55512,8 +55532,8 @@ var Profile = require('./components/profile/profilepage')
 var ProfileForm = require('./components/profile/profileForm')
 var Chat = require('./components/conversation/alluserschat')
 var IndividualChat = require('./components/conversation/individualchat')
-
-var routes = (  
+  
+var routes = (
   React.createElement(Router, {history: hashHistory}, 
     React.createElement(Route, {path: "/", component: App}), 
     React.createElement(Route, {path: "profile/:userid", component: Profile}), 
@@ -55600,6 +55620,65 @@ var ActionType = require('../constants/actionTypes')
 var EventEmitter = require('events').EventEmitter
 var Assign = require('object-assign')
 var CHANGE_EVENT = 'change';
+var _profileanswers = [];
+var _ = require('lodash');
+
+var ProfileAnswersStore = Assign({}, EventEmitter.prototype, {
+  addChangeListener: function(callback) {
+    this.on(CHANGE_EVENT, callback);
+  },
+
+  removeChangeListener: function(callback) {
+    this.removeListener(CHANGE_EVENT, callback);
+  },
+
+  emitChange: function() {
+    this.emit(CHANGE_EVENT);
+  },
+
+  getAllProfileAnswers: function() {
+    return _profileanswers;
+  },
+
+  getAnswers: function(user_answer, question_owner) {
+    emptyArray = []
+      for (var i = 0; i < _profileanswers.length; i++) {
+        var iteration = _profileanswers[i]
+        if (iteration.user_answering_id == user_answer && iteration.question_owner_id == question_owner) {
+          emptyArray.push(iteration)
+        }
+      }
+
+      return emptyArray
+    }
+
+});
+
+
+
+Dispatcher.register(function(action){
+  switch(action.actionType){
+    case ActionType.INITIALIZE:
+      _profileanswers = action.initialData.profileanswer
+      ProfileAnswersStore.emitChange()
+      break;
+    case ActionType.ADD_PROFILE_QUESTION_ANSWER:
+      _profileanswers.push(action.data)
+      ProfileAnswersStore.emitChange()
+      break;
+  }
+
+})
+
+
+module.exports = ProfileAnswersStore;
+
+},{"../constants/actionTypes":244,"../dispatcher/appDispatcher":245,"events":4,"lodash":53,"object-assign":55}],250:[function(require,module,exports){
+var Dispatcher = require('../dispatcher/appDispatcher')
+var ActionType = require('../constants/actionTypes')
+var EventEmitter = require('events').EventEmitter
+var Assign = require('object-assign')
+var CHANGE_EVENT = 'change';
 var _profileinfo = [];
 var _ = require('lodash');
 
@@ -55647,7 +55726,7 @@ Dispatcher.register(function(action){
 
 module.exports = ProfileinfoStore;
 
-},{"../constants/actionTypes":244,"../dispatcher/appDispatcher":245,"events":4,"lodash":53,"object-assign":55}],250:[function(require,module,exports){
+},{"../constants/actionTypes":244,"../dispatcher/appDispatcher":245,"events":4,"lodash":53,"object-assign":55}],251:[function(require,module,exports){
 var Dispatcher = require('../dispatcher/appDispatcher')
 var ActionType = require('../constants/actionTypes')
 var EventEmitter = require('events').EventEmitter
