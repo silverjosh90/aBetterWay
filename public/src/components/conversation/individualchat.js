@@ -7,6 +7,8 @@ var CommentForm = require('./commentform')
 var CommentDisplay = require('./commentDisplay')
 var pollInterval = 100;
 var InitiateChat = require('./initiateChat')
+var hashHistory = require('react-router').hashHistory
+var ProfileAnswersActions = require('../../actions/profileAnswersActions')
 
 var IndividualChat= React.createClass({
   getInitialState: function() {
@@ -15,8 +17,36 @@ var IndividualChat= React.createClass({
       messages: this.sortComments(MessageStore.getConvo(this.props.params.receiverid, this.props.params.userid)),
       user: UserStore.getUserById(this.props.params.userid),
       friend: UserStore.getUserById(this.props.params.receiverid),
-      profileInfo: ProfileinfoStore.getProfileInfo(this.props.params.receiverid)
+      profileInfo: ProfileinfoStore.getProfileInfo(this.props.params.receiverid),
+      questions: {
+        question1: '',
+        question2: '',
+        question3: '',
+        question4: ''
+      }
   }
+},
+formSubmitted: function(event) {
+
+  event.preventDefault()
+  if (!this.state.questions.question1|| !this.state.questions.question2) {
+    return toastr.warning('text fields cannot be blank')
+  }
+  var answer = {
+    questions: this.state.questions,
+    user_answering_id: this.props.params.userid,
+    question_owner_id: this.props.params.receiverid
+  }
+  ProfileAnswersActions.addAnswers(answer)
+
+  hashHistory.push(`/conversation/${this.props.params.receiverid}/${this.props.params.userid}`)
+
+},
+setQuestionChange: function(event) {
+  var field = event.target.name;
+  var value = event.target.value;
+  this.state.questions[field] = value
+  return this.setState({profileInfo: this.state.profileInfo})
 },
 
 componentWillMount: function() {
@@ -89,7 +119,7 @@ _onChange: function(comment) {
     userid = this.props.params.userid
     if(!this.state.messages.length) {
       return (
-        <InitiateChat profile={this.state.profileInfo} userinfo={this.state.friend} />
+        <InitiateChat profile={this.state.profileInfo} onSave={this.formSubmitted} onType={this.setQuestionChange} userinfo={this.state.friend} />
       )
     }
     return (

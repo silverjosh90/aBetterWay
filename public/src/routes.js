@@ -5,11 +5,11 @@ var App = require('./components/app')
 var PageNotFound = require('./components/common/pagenotfound')
 var Login = require('./components/login')
 var Profile = require('./components/profile/profilepage')
-var ProfileForm = require('./components/profile/profileForm')   
+var ProfileForm = require('./components/profile/profileForm')
 var Chat = require('./components/conversation/alluserschat')
 var IndividualChat = require('./components/conversation/individualchat')
 
-var routes = (
+var routes = (  
   <Router history={hashHistory}>
     <Route path="/" component={App} />
     <Route path="profile/:userid" component={Profile} />

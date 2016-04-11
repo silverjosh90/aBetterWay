@@ -54481,7 +54481,7 @@ InitializeActions = {
 
 module.exports = InitializeActions
 
-},{"../constants/actionTypes":243,"../dispatcher/appDispatcher":244}],225:[function(require,module,exports){
+},{"../constants/actionTypes":244,"../dispatcher/appDispatcher":245}],225:[function(require,module,exports){
 var Dispatcher = require('../dispatcher/appDispatcher');
 var ActionTypes = require('../constants/actionTypes')
 
@@ -54536,7 +54536,39 @@ $.ajax({
 
 module.exports= MessageActions
 
-},{"../constants/actionTypes":243,"../dispatcher/appDispatcher":244}],226:[function(require,module,exports){
+},{"../constants/actionTypes":244,"../dispatcher/appDispatcher":245}],226:[function(require,module,exports){
+var Dispatcher = require('../dispatcher/appDispatcher');
+var ActionTypes = require('../constants/actionTypes')
+
+var ProfileAnswersActions = {
+  addAnswers: function(answers) {
+    console.log('getting to profile answers');
+$.ajax({
+  type: "POST",
+  url: 'http://localhost:3000/profileanswers/answers',
+  data: answers,
+  dataType: 'json',
+  cache: false,
+  error: function (xhr, ajaxOptions, thrownError) {
+          console.log(xhr);
+          console.log(thrownError)
+
+  },
+  success: function(data){
+
+    Dispatcher.dispatch({
+      actionType: ActionTypes.ADD_PROFILE_QUESTION_ANSWER,
+      user: data
+    })
+  }
+})
+
+}
+}
+
+module.exports = ProfileAnswersActions
+
+},{"../constants/actionTypes":244,"../dispatcher/appDispatcher":245}],227:[function(require,module,exports){
 var Dispatcher = require('../dispatcher/appDispatcher');
 var ActionTypes = require('../constants/actionTypes')
 
@@ -54592,7 +54624,7 @@ var ProfileInfoActions = {
 
 module.exports= ProfileInfoActions
 
-},{"../constants/actionTypes":243,"../dispatcher/appDispatcher":244}],227:[function(require,module,exports){
+},{"../constants/actionTypes":244,"../dispatcher/appDispatcher":245}],228:[function(require,module,exports){
 var Dispatcher = require('../dispatcher/appDispatcher');
 var ActionTypes = require('../constants/actionTypes')
 
@@ -54643,7 +54675,7 @@ $.ajax({
 
 module.exports = UserActions
 
-},{"../constants/actionTypes":243,"../dispatcher/appDispatcher":244}],228:[function(require,module,exports){
+},{"../constants/actionTypes":244,"../dispatcher/appDispatcher":245}],229:[function(require,module,exports){
 
 var $ = require('jquery')
 var PropTypes = require('react').PropTypes
@@ -54787,7 +54819,7 @@ var App = React.createClass({displayName: "App",
 
 module.exports = App
 
-},{"../actions/profileInfoActions":226,"../actions/userActions":227,"../stores/messageStore":247,"../stores/profileInfoStore":248,"../stores/userStore":249,"jquery":52,"react":220,"react-router":85,"toastr":222}],229:[function(require,module,exports){
+},{"../actions/profileInfoActions":227,"../actions/userActions":228,"../stores/messageStore":248,"../stores/profileInfoStore":249,"../stores/userStore":250,"jquery":52,"react":220,"react-router":85,"toastr":222}],230:[function(require,module,exports){
 var Link = require('react-router').Link
 
 var PageNotFound = React.createClass({displayName: "PageNotFound",
@@ -54804,7 +54836,7 @@ var PageNotFound = React.createClass({displayName: "PageNotFound",
 
 module.exports = PageNotFound
 
-},{"react-router":85}],230:[function(require,module,exports){
+},{"react-router":85}],231:[function(require,module,exports){
 
 var DisplayAllUsers = require('./displayallusers')
 var UserStore = require('../../stores/userStore')
@@ -54835,7 +54867,22 @@ var Chat = React.createClass({displayName: "Chat",
 
 module.exports = Chat
 
-},{"../../stores/userStore":249,"./displayallusers":233}],231:[function(require,module,exports){
+},{"../../stores/userStore":250,"./displayallusers":235}],232:[function(require,module,exports){
+var ChatEditFields  = React.createClass({displayName: "ChatEditFields",
+  render: function() {
+    return (
+      React.createElement("div", null, 
+      React.createElement("input", {type: "text", name: this.props.name, ref: this.props.name, placeholder: this.props.placeholder, value: this.props.value, 
+      className: "form-control", onChange: this.props.onChange}), 
+      React.createElement("div", {className: "input"}, " ", this.props.error)
+      )
+    )
+  }
+})
+
+module.exports= ChatEditFields
+
+},{}],233:[function(require,module,exports){
 var moment = require('moment')
 
 
@@ -54881,7 +54928,7 @@ var CommentDisplay = React.createClass({displayName: "CommentDisplay",
 
 module.exports = CommentDisplay
 
-},{"moment":54}],232:[function(require,module,exports){
+},{"moment":54}],234:[function(require,module,exports){
 
 var CommentForm = React.createClass({displayName: "CommentForm",
   getInitialState: function() {
@@ -54914,7 +54961,7 @@ var CommentForm = React.createClass({displayName: "CommentForm",
 
 module.exports= CommentForm
 
-},{}],233:[function(require,module,exports){
+},{}],235:[function(require,module,exports){
 var Link = require('react-router').Link
 var DisplayAllUsers = React.createClass({displayName: "DisplayAllUsers",
 
@@ -54932,7 +54979,7 @@ var DisplayAllUsers = React.createClass({displayName: "DisplayAllUsers",
 
 module.exports = DisplayAllUsers
 
-},{"react-router":85}],234:[function(require,module,exports){
+},{"react-router":85}],236:[function(require,module,exports){
 
 var MessageStore= require('../../stores/messageStore')
 var ProfileinfoStore= require('../../stores/profileInfoStore')
@@ -54942,6 +54989,8 @@ var CommentForm = require('./commentform')
 var CommentDisplay = require('./commentDisplay')
 var pollInterval = 100;
 var InitiateChat = require('./initiateChat')
+var hashHistory = require('react-router').hashHistory
+var ProfileAnswersActions = require('../../actions/profileAnswersActions')
 
 var IndividualChat= React.createClass({displayName: "IndividualChat",
   getInitialState: function() {
@@ -54950,8 +54999,36 @@ var IndividualChat= React.createClass({displayName: "IndividualChat",
       messages: this.sortComments(MessageStore.getConvo(this.props.params.receiverid, this.props.params.userid)),
       user: UserStore.getUserById(this.props.params.userid),
       friend: UserStore.getUserById(this.props.params.receiverid),
-      profileInfo: ProfileinfoStore.getProfileInfo(this.props.params.receiverid)
+      profileInfo: ProfileinfoStore.getProfileInfo(this.props.params.receiverid),
+      questions: {
+        question1: '',
+        question2: '',
+        question3: '',
+        question4: ''
+      }
   }
+},
+formSubmitted: function(event) {
+
+  event.preventDefault()
+  if (!this.state.questions.question1|| !this.state.questions.question2) {
+    return toastr.warning('text fields cannot be blank')
+  }
+  var answer = {
+    questions: this.state.questions,
+    user_answering_id: this.props.params.userid,
+    question_owner_id: this.props.params.receiverid
+  }
+  ProfileAnswersActions.addAnswers(answer)
+
+  hashHistory.push(`/conversation/${this.props.params.receiverid}/${this.props.params.userid}`)
+
+},
+setQuestionChange: function(event) {
+  var field = event.target.name;
+  var value = event.target.value;
+  this.state.questions[field] = value
+  return this.setState({profileInfo: this.state.profileInfo})
 },
 
 componentWillMount: function() {
@@ -55024,7 +55101,7 @@ _onChange: function(comment) {
     userid = this.props.params.userid
     if(!this.state.messages.length) {
       return (
-        React.createElement(InitiateChat, {profile: this.state.profileInfo, userinfo: this.state.friend})
+        React.createElement(InitiateChat, {profile: this.state.profileInfo, onSave: this.formSubmitted, onType: this.setQuestionChange, userinfo: this.state.friend})
       )
     }
     return (
@@ -55041,8 +55118,8 @@ _onChange: function(comment) {
 
 module.exports = IndividualChat
 
-},{"../../actions/messageActions":225,"../../stores/messageStore":247,"../../stores/profileInfoStore":248,"../../stores/userStore":249,"./commentDisplay":231,"./commentform":232,"./initiateChat":235}],235:[function(require,module,exports){
-var ProfileEditFields = require('../profile/profileEditFields')
+},{"../../actions/messageActions":225,"../../actions/profileAnswersActions":226,"../../stores/messageStore":248,"../../stores/profileInfoStore":249,"../../stores/userStore":250,"./commentDisplay":233,"./commentform":234,"./initiateChat":237,"react-router":85}],237:[function(require,module,exports){
+var ChatEditFields = require('./chatEditFields')
 
 var InitiateChat = React.createClass({displayName: "InitiateChat",
   render: function() {
@@ -55052,15 +55129,21 @@ var InitiateChat = React.createClass({displayName: "InitiateChat",
     React.createElement("h1", null, " ", this.props.userinfo.firstname, " ", this.props.userinfo.lastname, " "), 
     React.createElement("img", {src: this.props.userinfo.profilepicture}), 
     React.createElement("form", null, 
-    React.createElement("p", null, " ", this.props.profile.question1), 
-    React.createElement(ProfileEditFields, null), 
-    React.createElement("p", null, " ", this.props.profile.question2), 
-    React.createElement(ProfileEditFields, null), 
-    React.createElement("p", null, " ", this.props.profile.question3), 
-    React.createElement(ProfileEditFields, null), 
-    React.createElement("p", null, " ", this.props.profile.question4), 
-    React.createElement(ProfileEditFields, null), 
-    React.createElement("input", {type: "submit", value: "submitAnswers"})
+
+      React.createElement("p", null, " ", this.props.profile.question1), 
+      React.createElement(ChatEditFields, {name: "question1", placeholder: "Question 1", onChange: this.props.onType}), 
+
+      React.createElement("p", null, " ", this.props.profile.question2), 
+      React.createElement(ChatEditFields, {name: "question2", placeholder: "Question 2", onChange: this.props.onType}), 
+
+      React.createElement("p", null, " ", this.props.profile.question3), 
+      React.createElement(ChatEditFields, {name: "question3", placeholder: "Question 3", onChange: this.props.onType}), 
+
+      React.createElement("p", null, " ", this.props.profile.question4), 
+      React.createElement(ChatEditFields, {name: "question4", placeholder: "Question 4", onChange: this.props.onType}), 
+
+      React.createElement("input", {type: "submit", onClick: this.props.onSave, value: "Submit Answers"})
+
     )
 
     )
@@ -55070,7 +55153,7 @@ var InitiateChat = React.createClass({displayName: "InitiateChat",
 
 module.exports = InitiateChat
 
-},{"../profile/profileEditFields":238}],236:[function(require,module,exports){
+},{"./chatEditFields":232}],238:[function(require,module,exports){
 // var PropTypes = require('react').PropTypes
 // var Router = require('react-router')
 // var hashHistory= Router.hashHistory
@@ -55178,39 +55261,23 @@ module.exports = InitiateChat
 // });
 // module.exports = FacebookLogin;
 
-},{}],237:[function(require,module,exports){
-var ProfileEditFields  = React.createClass({displayName: "ProfileEditFields",
-  render: function() {
-    return (
-      React.createElement("div", null, 
-      React.createElement("label", {htmlFor: this.props.name}, " ", this.props.placeholder, " "), 
-      React.createElement("input", {type: "text", name: this.props.name, ref: this.props.name, placeholder: this.props.placeholder, value: this.props.value, 
-      className: "form-control", onChange: this.props.onChange}), 
-      React.createElement("div", {className: "input"}, " ", this.props.error)
-      )
-    )
-  }
-})
-
-module.exports= ProfileEditFields
-
-},{}],238:[function(require,module,exports){
-var ProfileEditFields  = React.createClass({displayName: "ProfileEditFields",
-  render: function() {
-    return (
-      React.createElement("div", null, 
-      React.createElement("label", {htmlFor: this.props.name}, " ", this.props.placeholder, " "), 
-      React.createElement("input", {type: "text", name: this.props.name, ref: this.props.name, placeholder: this.props.placeholder, value: this.props.value, 
-      className: "form-control", onChange: this.props.onChange}), 
-      React.createElement("div", {className: "input"}, " ", this.props.error)
-      )
-    )
-  }
-})
-
-module.exports= ProfileEditFields
-
 },{}],239:[function(require,module,exports){
+var ProfileEditFields  = React.createClass({displayName: "ProfileEditFields",
+  render: function() {
+    return (
+      React.createElement("div", null, 
+      React.createElement("label", {htmlFor: this.props.name}, " ", this.props.placeholder, " "), 
+      React.createElement("input", {type: "text", name: this.props.name, ref: this.props.name, placeholder: this.props.placeholder, value: this.props.value, 
+      className: "form-control", onChange: this.props.onChange}), 
+      React.createElement("div", {className: "input"}, " ", this.props.error)
+      )
+    )
+  }
+})
+
+module.exports= ProfileEditFields
+
+},{}],240:[function(require,module,exports){
 var ProfileinfoStore = require('../../stores/profileInfoStore')
 var UserStore = require('../../stores/userStore')
 var ProfileFormSection = require('./profileFormSection')
@@ -55262,7 +55329,7 @@ var ProfileForm = React.createClass({displayName: "ProfileForm",
 
 module.exports = ProfileForm
 
-},{"../../actions/profileInfoActions":226,"../../stores/profileInfoStore":248,"../../stores/userStore":249,"./profileFormSection":240,"react-router":85,"toastr":222}],240:[function(require,module,exports){
+},{"../../actions/profileInfoActions":227,"../../stores/profileInfoStore":249,"../../stores/userStore":250,"./profileFormSection":241,"react-router":85,"toastr":222}],241:[function(require,module,exports){
 var ProfileEditFields = require('./ProfileEditFields')
 var ProfileFormSection = React.createClass({displayName: "ProfileFormSection",
 // var name;
@@ -55290,7 +55357,7 @@ var ProfileFormSection = React.createClass({displayName: "ProfileFormSection",
 
 module.exports= ProfileFormSection
 
-},{"./ProfileEditFields":237}],241:[function(require,module,exports){
+},{"./ProfileEditFields":239}],242:[function(require,module,exports){
 var Link = require('react-router').Link
 var UserActions = require('../../actions/userActions')
 var UserStore = require('../../stores/userStore')
@@ -55372,7 +55439,7 @@ return(
 
 module.exports = Profile
 
-},{"../../actions/userActions":227,"../../stores/profileInfoStore":248,"../../stores/userStore":249,"./userinfo":242,"react-router":85}],242:[function(require,module,exports){
+},{"../../actions/userActions":228,"../../stores/profileInfoStore":249,"../../stores/userStore":250,"./userinfo":243,"react-router":85}],243:[function(require,module,exports){
 
 
 UserInfo = React.createClass({displayName: "UserInfo",
@@ -55406,22 +55473,23 @@ UserInfo = React.createClass({displayName: "UserInfo",
 
 module.exports = UserInfo
 
-},{}],243:[function(require,module,exports){
+},{}],244:[function(require,module,exports){
 module.exports =
 {
   INITIALIZE: 'INITIALIZE',
   CREATE_USER: 'CREATE_USER',
   SUBMIT_COMMENT: 'SUBMIT_COMMENT',
   SAVE_PROFILEINFO: 'SAVE_PROFILEINFO',
-  CREATE_PROFILE: "CREATE_PROFILE"
+  CREATE_PROFILE: "CREATE_PROFILE",
+  ADD_PROFILE_QUESTION_ANSWER: 'ADD_PROFILE_QUESTION_ANSWER'
 }
 
-},{}],244:[function(require,module,exports){
+},{}],245:[function(require,module,exports){
 var Dispatcher = require('flux').Dispatcher
 
 module.exports = new Dispatcher();
 
-},{"flux":32}],245:[function(require,module,exports){
+},{"flux":32}],246:[function(require,module,exports){
 var routes = require('./routes')
 var InitializeActions = require('./actions/initializeActions')
 
@@ -55433,7 +55501,7 @@ ReactDOM.render(
   document.getElementById('content')
 )
 
-},{"./actions/initializeActions":224,"./routes":246}],246:[function(require,module,exports){
+},{"./actions/initializeActions":224,"./routes":247}],247:[function(require,module,exports){
 var Router = require('react-router').Router
 var Route = require('react-router').Route;
 var hashHistory = require('react-router').hashHistory
@@ -55441,11 +55509,11 @@ var App = require('./components/app')
 var PageNotFound = require('./components/common/pagenotfound')
 var Login = require('./components/login')
 var Profile = require('./components/profile/profilepage')
-var ProfileForm = require('./components/profile/profileForm')   
+var ProfileForm = require('./components/profile/profileForm')
 var Chat = require('./components/conversation/alluserschat')
 var IndividualChat = require('./components/conversation/individualchat')
 
-var routes = (
+var routes = (  
   React.createElement(Router, {history: hashHistory}, 
     React.createElement(Route, {path: "/", component: App}), 
     React.createElement(Route, {path: "profile/:userid", component: Profile}), 
@@ -55461,7 +55529,7 @@ var routes = (
 
 module.exports = routes;
 
-},{"./components/app":228,"./components/common/pagenotfound":229,"./components/conversation/alluserschat":230,"./components/conversation/individualchat":234,"./components/login":236,"./components/profile/profileForm":239,"./components/profile/profilepage":241,"react-router":85}],247:[function(require,module,exports){
+},{"./components/app":229,"./components/common/pagenotfound":230,"./components/conversation/alluserschat":231,"./components/conversation/individualchat":236,"./components/login":238,"./components/profile/profileForm":240,"./components/profile/profilepage":242,"react-router":85}],248:[function(require,module,exports){
 var Dispatcher = require('../dispatcher/appDispatcher')
 var ActionType = require('../constants/actionTypes')
 var EventEmitter = require('events').EventEmitter
@@ -55526,7 +55594,7 @@ Dispatcher.register(function(action){
 
 module.exports = MessageStore;
 
-},{"../constants/actionTypes":243,"../dispatcher/appDispatcher":244,"events":4,"lodash":53,"object-assign":55}],248:[function(require,module,exports){
+},{"../constants/actionTypes":244,"../dispatcher/appDispatcher":245,"events":4,"lodash":53,"object-assign":55}],249:[function(require,module,exports){
 var Dispatcher = require('../dispatcher/appDispatcher')
 var ActionType = require('../constants/actionTypes')
 var EventEmitter = require('events').EventEmitter
@@ -55579,7 +55647,7 @@ Dispatcher.register(function(action){
 
 module.exports = ProfileinfoStore;
 
-},{"../constants/actionTypes":243,"../dispatcher/appDispatcher":244,"events":4,"lodash":53,"object-assign":55}],249:[function(require,module,exports){
+},{"../constants/actionTypes":244,"../dispatcher/appDispatcher":245,"events":4,"lodash":53,"object-assign":55}],250:[function(require,module,exports){
 var Dispatcher = require('../dispatcher/appDispatcher')
 var ActionType = require('../constants/actionTypes')
 var EventEmitter = require('events').EventEmitter
@@ -55649,4 +55717,4 @@ Dispatcher.register(function(action){
 
 module.exports = UserStore;
 
-},{"../constants/actionTypes":243,"../dispatcher/appDispatcher":244,"events":4,"lodash":53,"object-assign":55}]},{},[245]);
+},{"../constants/actionTypes":244,"../dispatcher/appDispatcher":245,"events":4,"lodash":53,"object-assign":55}]},{},[246]);
