@@ -15,7 +15,7 @@ h2 {
   margin-top: 0px;
 }
 .splashImg {
-  background: -webkit-linear-gradient(top, #FF7676, #F6F49D);
+  /*background: -webkit-linear-gradient(top, #FF7676, #F6F49D);*/
   width: 100vw;
   height: 94vh;
   display: flex;
@@ -23,7 +23,11 @@ h2 {
 }
 
 .commentDisplay {
-  overflow-y:visible;
+  overflow-y: visible;
+  width: 42vw;
+  float: left;
+  position: relative;
+  top: -10vh;
 }
 
 .blurBackground {
@@ -216,4 +220,41 @@ form {
 
 .chatComment {
   float: left;
+}
+
+.show {
+  display: normal
+}
+.hide {
+  display: none;
+}
+.toggle {
+    float: right;
+    padding-right: 20%;
+    position: relative;
+    top: 30vh;
+    clear: both;
+}
+
+.calendarDisplay {
+  float: right;
+margin-right: 30%;
+position: relative;
+top: 28vh;
+}
+
+.calendar {
+  border: 0;
+  width: 55vw;
+  height: 95vh;
+  margin-top: 5vh;
+  float: right;
+  margin-right: 5vh;
+}
+
+.commentForm {
+  width: 45vh;
+  height: 10vh;
+  float: left;
+}
 }

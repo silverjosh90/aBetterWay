@@ -1,6 +1,9 @@
 * {
   font-family: 'Nunito', sans-serif;
 }
+h1 {
+  text-align: center;
+}
 h3 {
   font-family: 'Nunito', sans-serif !important;
 }
@@ -12,7 +15,7 @@ h2 {
   margin-top: 0px;
 }
 .splashImg {
-  background: -webkit-linear-gradient(top, #FF7676, #F6F49D);
+  /*background: -webkit-linear-gradient(top, #FF7676, #F6F49D);*/
   width: 100vw;
   height: 94vh;
   display: flex;
@@ -20,7 +23,11 @@ h2 {
 }
 
 .commentDisplay {
-  overflow-y:visible;
+  overflow-y: visible;
+  width: 42vw;
+  float: left;
+  position: relative;
+  top: -10vh;
 }
 
 .blurBackground {
@@ -187,10 +194,17 @@ img {
   margin-bottom: 1vh;
 }
 
-.editPage {
-  background-color: red;
+form {
+  width: 50vw;
+  margin: auto;
+  border: 1px solid #f6f29c;
+  padding: 2vh;
+  height: 90vh;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  display: flex;
+  flex-direction: column;
 }
-
 
 
 .chatPic {
@@ -206,4 +220,41 @@ img {
 
 .chatComment {
   float: left;
+}
+
+.show {
+  display: normal
+}
+.hide {
+  display: none;
+}
+.toggle {
+    float: right;
+    padding-right: 20%;
+    position: relative;
+    top: 30vh;
+    clear: both;
+}
+
+.calendarDisplay {
+  float: right;
+margin-right: 30%;
+position: relative;
+top: 28vh;
+}
+
+.calendar {
+  border: 0;
+  width: 55vw;
+  height: 95vh;
+  margin-top: 5vh;
+  float: right;
+  margin-right: 5vh;
+}
+
+.commentForm {
+  width: 45vh;
+  height: 10vh;
+  float: left;
+}
 }

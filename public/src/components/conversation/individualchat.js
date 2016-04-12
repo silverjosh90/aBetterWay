@@ -5,12 +5,17 @@ var ProfileAnswersStore= require('../../stores/profileAnswersStore')
 var UserStore= require('../../stores/userStore')
 var MessageAction = require('../../actions/messageActions')
 var CommentForm = require('./commentform')
+var CalendarForm = require('./calendarForm')
 var CommentDisplay = require('./commentDisplay')
 var pollInterval = 100;
 var InitiateChat = require('./initiateChat')
 var hashHistory = require('react-router').hashHistory
 var ProfileAnswersActions = require('../../actions/profileAnswersActions')
 var interval = setInterval(this.loadCommentsFromServer, pollInterval);
+var ToggleDisplay = require('react-toggle-display')
+var SmileySnake= require('./smileySnake')
+var NinjaGame = require('./ninjaGame')
+var QuestGame = require('./questGame')
 
 
 var IndividualChat= React.createClass({
@@ -26,7 +31,10 @@ var IndividualChat= React.createClass({
         question2: '',
         question3: '',
         question4: ''
-      }
+      },
+      smileysnake: false,
+      quest: false,
+      ninja: false,
   }
 },
 formSubmitted: function(event) {
@@ -114,18 +122,62 @@ _onChange: function(comment) {
   window.setTimeout(this.scrolled , 120)
 
 },
+toggleSmiley: function() {
+  this.setState({smileysnake: !this.state.smileysnake})
+},
+toggleNinja: function() {
+  this.setState({ninja: !this.state.ninja})
+},
+toggleQuest: function() {
+  this.setState({quest: !this.state.quest})
+},
+
+// <button className="calendarDisplay" onClick={this.toggleView}> Hello </button>
+// <ToggleDisplay show={this.state.display}>
+//   { this.state.display ? <CalendarForm/> : null }
+// </ToggleDisplay>
+// <embed className="calendar" base="http://external.kongregate-games.com/gamez/0021/0593/live/" src="http://external.kongregate-games.com/gamez/0021/0593/live/embeddable_210593.swf" type="application/x-shockwave-flash"></embed>
+// <embed className="calendar" base="http://external.kongregate-games.com/gamez/0021/4044/live/" src="http://external.kongregate-games.com/gamez/0021/4044/live/embeddable_214044.swf" type="application/x-shockwave-flash"></embed>
+// if(!ProfileAnswersStore.getAnswers(this.props.params.userid, this.props.params.receiverid).length) {
+//   return (
+//     <InitiateChat profile={this.state.profileInfo} onSave={this.formSubmitted} onType={this.setQuestionChange} userinfo={this.state.friend} />
+//   )
+// }
 
   render: function() {
     userpic = this.state.user.profilepicture
     friendpic = this.state.friend.profilepicture
     userid = this.props.params.userid
-    if(!ProfileAnswersStore.getAnswers(this.props.params.userid, this.props.params.receiverid).length) {
-      return (
-        <InitiateChat profile={this.state.profileInfo} onSave={this.formSubmitted} onType={this.setQuestionChange} userinfo={this.state.friend} />
-      )
+
+    if (this.state.messages) {
+        return ( <InitiateChat profile={this.state.profileInfo} onSave={this.formSubmitted} onType={this.setQuestionChange} userinfo={this.state.friend} /> )
+    }
+    for (var i = 0; i < this.state.messages.length; i++) {
+\      var iteration = this.state.messages[i]
+
+
+    if(iteration.sender_id == this.props.params.userid && iteration.seen == false) {
+        return (
+          <InitiateChat profile={this.state.profileInfo} onSave={this.formSubmitted} onType={this.setQuestionChange} userinfo={this.state.friend} />
+        )
+      }
     }
     return (
       <div>
+      <button  onClick={this.toggleSmiley}>SmileySnake</button>
+      <ToggleDisplay show={this.state.smileysnake}>
+        { this.state.smileysnake ? <SmileySnake /> : null }
+      </ToggleDisplay>
+      <button  onClick={this.toggleNinja}>Ninja</button>
+      <ToggleDisplay show={this.state.ninja}>
+        { this.state.ninja ? <NinjaGame /> : null }
+      </ToggleDisplay>
+      <button  onClick={this.toggleQuest}>Quest</button>
+      <ToggleDisplay show={this.state.quest}>
+        { this.state.quest ? <QuestGame /> : null }
+      </ToggleDisplay>
+
+
       <div className="commentDisplay">
       <CommentDisplay key='derp' userprofilepicture={userpic} friendprofilepicture={friendpic} paramid={userid}
      messages={this.state.messages} />

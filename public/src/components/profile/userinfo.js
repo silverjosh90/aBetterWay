@@ -3,7 +3,7 @@
 UserInfo = React.createClass({
   render: function() {
     return (
-    <div class='infoDiv'>
+    <div className='infoDiv'>
       <img src={this.props.profilepicture} />
       <div className='profInfoDiv'>
         <h3 className='bio'>Bio</h3>

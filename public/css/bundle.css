@@ -201,8 +201,43 @@ form {
   display: flex;
   flex-direction: column;
 }
+.commentDisplay {
+  overflow: scroll;
+  height: 100%;
+}
+.commentDisplay:first-child {
+  overflow: scroll;
+  display: flex;
+  flex-direction: column;
+  margin-left: 25%;
+}
+.chatMessage:last-child {
+  margin-bottom: 15vh;
+}
+
+/*THIS IS THE CODE YOU NEED TO SCROLL TO THE BOTTOM OF YOUR CHAT WHEN A MESSAGE IS ADDED
+window.setInterval(function() {
+  var elem = document.getElementById('data');
+  elem.scrollTop = elem.scrollHeight;
+}, 5000);*/
 
 
+.commentForm {
+  height: auto;
+  position: fixed;
+  bottom: 0;
+  background-color: #FF7876;
+}
+.chatMessage {
+  padding-bottom: 5vh;
+  width: 50vw;
+  border: 1px solid orange;
+  margin-bottom: 1vh;
+  border-radius: 20px;
+}
+.commentDisplay:first-child:first-child {
+  margin-top: 1vh;
+}
 .chatPic {
   height: 40px;
   width: 40px;
