@@ -4,7 +4,7 @@ var ActionTypes = require('../constants/actionTypes')
 var MessageActions = {
   submitComment: function(comment) {
     var checkOrCreate =
-$.ajax({  
+$.ajax({
   type: "POST",
   url: 'http://localhost:3000/messages/submit',
   data: comment,
@@ -40,9 +40,11 @@ $.ajax({
 
       },
       success: function(data){
+        console.log(data);
         Dispatcher.dispatch({
           actionType: ActionTypes.COMMENT_SEEN,
-          message: data
+          sendid: sendid,
+          recid: recid
         })
       }
     })

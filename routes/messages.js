@@ -16,9 +16,7 @@ Api.route('/')
   })
 Api.route('/seen')
   .post(function(req,res){
-    console.log(req.body.sender);
-    console.log(req.body.receiver);
-    Messages().update({seen: true}).where({sender_id: req.body.receiver, receiver_id: req.body.sender}).then(function(results){
+    Messages().update({seen: true}).where({sender_id: req.body.receiver_id, receiver_id: req.body.sender_id}).then(function(results){
       console.log(results);
       res.json(results)
     })

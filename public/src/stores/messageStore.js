@@ -54,7 +54,14 @@ Dispatcher.register(function(action){
       MessageStore.emitChange()
       break;
     case ActionType.COMMENT_SEEN:
-      // Find all comments with sender id and receiver id and then change seen to true
+      for (var i = 0; i < _messages.length; i++) {
+        var iteration =_messages[i]
+        if(iteration.sender_id == action.recid && iteration.receiver_id == action.sendid){
+          iteration.seen = true
+          }
+        }
+          MessageStore.emitChange
+          break;
   }
 
 })

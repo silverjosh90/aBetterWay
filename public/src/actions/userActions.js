@@ -3,6 +3,7 @@ var ActionTypes = require('../constants/actionTypes')
 
 var UserActions = {
   createUser: function(user) {
+  
     console.log('getting here to user actions');
     var checkOrCreate =
 $.ajax({
@@ -17,7 +18,7 @@ $.ajax({
 
   },
   success: function(data){
-
+    console.log(data.firstname);
     Dispatcher.dispatch({
       actionType: ActionTypes.CREATE_USER,
       user: data

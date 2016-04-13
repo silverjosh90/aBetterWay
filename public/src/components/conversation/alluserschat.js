@@ -11,14 +11,14 @@ var Chat = React.createClass({
   var allUsers = this.state.users
   var individualUsers = allUsers.map(function(user){
     return (
-      <DisplayAllUsers firstname={user.firstname} profilepicture={user.profilepicture} secondUser={parameter}  lastname={user.lastname} fb_id={user.fb_id} key={user.id} />
+      <div className="chatFriends">
+      <DisplayAllUsers className="chatUsers" firstname={user.firstname} location={user.city} profilepicture={user.profilepicture} secondUser={parameter}  lastname={user.lastname} fb_id={user.fb_id} key={user.id} />
+      </div>
     )
   })
 
     return (
-      <div>
-      <p> hello </p>
-
+      <div className="UsersDisplay">
       {individualUsers}
       </div>
     )

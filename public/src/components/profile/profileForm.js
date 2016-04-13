@@ -21,22 +21,21 @@ var ProfileForm = React.createClass({
   },
 
   formSubmitted: function(event) {
+    event.preventDefault()
   toastr.options={
     'preventDuplicates': true,
     "positionClass": "toast-bottom-left"
   }
-  if (!this.state.profileInfo.question1|| !this.state.profileInfo.question2 || !this.state.profileInfo.Bio) {
+  if (!this.state.profileInfo.Bio) {
     return toastr.warning('text fields cannot be blank')
   }
-  event.preventDefault()
   profileInfoActions.saveInfo(this.state.profileInfo)
   hashHistory.push(`/profile/${this.state.profileInfo.fb_id}`)
-  // AuthorActions.createAuthor(this.state.author)
   toastr.success('Info Saved')
   },
   render: function() {
     return (
-    <div>
+    <div className="BioEdit">
     <h1> {this.state.user.firstname} Profile </h1>
     <ProfileFormSection onChange={this.setQuestionChange} valued={this.state.profileInfo.Bio} onSave={this.formSubmitted} profileinfo={this.state.profileInfo} />
 

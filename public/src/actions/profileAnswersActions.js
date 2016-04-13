@@ -16,10 +16,11 @@ $.ajax({
 
   },
   success: function(data){
-
+    var answer = data[0]
+    console.log(answer);
     Dispatcher.dispatch({
       actionType: ActionTypes.ADD_PROFILE_QUESTION_ANSWER,
-      user: data
+      question: answer
     })
   }
 })

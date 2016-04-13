@@ -54565,7 +54565,7 @@ var ActionTypes = require('../constants/actionTypes')
 var MessageActions = {
   submitComment: function(comment) {
     var checkOrCreate =
-$.ajax({  
+$.ajax({
   type: "POST",
   url: 'http://localhost:3000/messages/submit',
   data: comment,
@@ -54601,9 +54601,11 @@ $.ajax({
 
       },
       success: function(data){
+        console.log(data);
         Dispatcher.dispatch({
           actionType: ActionTypes.COMMENT_SEEN,
-          message: data
+          sendid: sendid,
+          recid: recid
         })
       }
     })
@@ -54632,10 +54634,11 @@ $.ajax({
 
   },
   success: function(data){
-
+    var answer = data[0]
+    console.log(answer);
     Dispatcher.dispatch({
       actionType: ActionTypes.ADD_PROFILE_QUESTION_ANSWER,
-      user: data
+      question: answer
     })
   }
 })
@@ -54707,6 +54710,7 @@ var ActionTypes = require('../constants/actionTypes')
 
 var UserActions = {
   createUser: function(user) {
+  
     console.log('getting here to user actions');
     var checkOrCreate =
 $.ajax({
@@ -54721,7 +54725,7 @@ $.ajax({
 
   },
   success: function(data){
-
+    console.log(data.firstname);
     Dispatcher.dispatch({
       actionType: ActionTypes.CREATE_USER,
       user: data
@@ -54858,7 +54862,7 @@ var App = React.createClass({displayName: "App",
 
 
     responseApi: function(authResponse){
-      FB.api('/me', { fields: ["picture.width(400).height(400)", 'first_name', 'last_name'] }, (me) => {
+      FB.api('/me', { fields: ["picture.width(400).height(400)", 'first_name', 'last_name', 'location'] }, (me) => {
         me.accessToken = authResponse.accessToken;
         this.responseFacebook(me);
       });
@@ -54875,7 +54879,7 @@ var App = React.createClass({displayName: "App",
     },
 
     click: function(e){
-      FB.login(this.checkLoginState, { scope: 'public_profile, email'});
+      FB.login(this.checkLoginState, { scope: 'public_profile, email, user_location'});
     },
 
   render: function() {
@@ -54888,11 +54892,11 @@ var App = React.createClass({displayName: "App",
           React.createElement("div", {className: "navButtons profile"}, "profile"), 
           React.createElement("div", {className: "navButtons logout"}, "logout")
         ), 
-        
+
         React.createElement("div", {className: "splashImg"}, 
         React.createElement("div", {className: "logo"}, React.createElement("i", {className: "fa fa-map-o", "aria-hidden": "true"})), 
           React.createElement("div", {className: "blurBackground"}, 
-            React.createElement("h2", {className: "pageTitle"}, "new kid in town"), 
+            React.createElement("h2", {className: "pageTitle"}, "A Better Way"), 
             React.createElement("button", {className: "fbLoginButton btn btn-primary", onClick: this.click}, "facebook login")
           )
         )
@@ -54904,7 +54908,7 @@ var App = React.createClass({displayName: "App",
 
 module.exports = App
 
-},{"../actions/profileInfoActions":228,"../actions/userActions":229,"../stores/messageStore":253,"../stores/profileInfoStore":255,"../stores/userStore":256,"jquery":52,"react":221,"react-router":85,"toastr":223}],231:[function(require,module,exports){
+},{"../actions/profileInfoActions":228,"../actions/userActions":229,"../stores/messageStore":253,"../stores/profileInfoStore":255,"../stores/userStore":257,"jquery":52,"react":221,"react-router":85,"toastr":223}],231:[function(require,module,exports){
 var Link = require('react-router').Link
 
 var PageNotFound = React.createClass({displayName: "PageNotFound",
@@ -54935,14 +54939,14 @@ var Chat = React.createClass({displayName: "Chat",
   var allUsers = this.state.users
   var individualUsers = allUsers.map(function(user){
     return (
-      React.createElement(DisplayAllUsers, {firstname: user.firstname, profilepicture: user.profilepicture, secondUser: parameter, lastname: user.lastname, fb_id: user.fb_id, key: user.id})
+      React.createElement("div", {className: "chatFriends"}, 
+      React.createElement(DisplayAllUsers, {className: "chatUsers", firstname: user.firstname, location: user.city, profilepicture: user.profilepicture, secondUser: parameter, lastname: user.lastname, fb_id: user.fb_id, key: user.id})
+      )
     )
   })
 
     return (
-      React.createElement("div", null, 
-      React.createElement("p", null, " hello "), 
-
+      React.createElement("div", {className: "UsersDisplay"}, 
       individualUsers
       )
     )
@@ -54952,7 +54956,7 @@ var Chat = React.createClass({displayName: "Chat",
 
 module.exports = Chat
 
-},{"../../stores/userStore":256,"./displayallusers":237}],233:[function(require,module,exports){
+},{"../../stores/userStore":257,"./displayallusers":237}],233:[function(require,module,exports){
 var CalendarForm = React.createClass({displayName: "CalendarForm",
   render: function() {
   return(
@@ -54971,9 +54975,9 @@ module.exports = CalendarForm
 var ChatEditFields  = React.createClass({displayName: "ChatEditFields",
   render: function() {
     return (
-      React.createElement("div", null, 
-      React.createElement("input", {type: "text", name: this.props.name, ref: this.props.name, placeholder: this.props.placeholder, value: this.props.value, 
-      className: "form-control", onChange: this.props.onChange}), 
+      React.createElement("div", {className: "questionInput"}, 
+      React.createElement("textarea", {name: this.props.name, ref: this.props.name, placeholder: this.props.placeholder, value: this.props.value, 
+      className: "classText", onChange: this.props.onChange}, " "), 
       React.createElement("div", {className: "input"}, " ", this.props.error)
       )
     )
@@ -55052,7 +55056,7 @@ var CommentForm = React.createClass({displayName: "CommentForm",
   render: function() {
     return (
         React.createElement("form", {className: "commentForm", onSubmit: this.handleSubmit}, 
-          React.createElement("input", {type: "text", placeholder: "Say something...", value: this.state.text, onChange: this.handleTextChange}), 
+          React.createElement("textarea", {className: "typeMessage", placeholder: "Say something...", value: this.state.text, onChange: this.handleTextChange}), 
           React.createElement("input", {type: "submit", className: "commenter", value: "Post"})
         )
     );
@@ -55068,9 +55072,12 @@ var DisplayAllUsers = React.createClass({displayName: "DisplayAllUsers",
   render: function() {
 
     return (
+      React.createElement("div", {className: "individualUserDisplay"}, 
       React.createElement(Link, {to: `/conversation/${this.props.fb_id}/${this.props.secondUser}`}, 
       React.createElement("img", {src: this.props.profilepicture, height: "200px", width: "200px"}), 
-      React.createElement("h5", null, " ", this.props.firstname, " ", this.props.lastname, " ")
+      React.createElement("h5", null, " ", this.props.firstname, " ", this.props.lastname, " "), 
+      React.createElement("h5", null, this.props.location)
+      )
       )
 
     )
@@ -55082,6 +55089,7 @@ module.exports = DisplayAllUsers
 },{"react-router":85}],238:[function(require,module,exports){
 
 var MessageStore= require('../../stores/messageStore')
+var Question= require('../../stores/questionStore')
 var ProfileinfoStore= require('../../stores/profileInfoStore')
 var ProfileAnswersStore= require('../../stores/profileAnswersStore')
 var UserStore= require('../../stores/userStore')
@@ -55102,18 +55110,14 @@ var QuestGame = require('./questGame')
 
 var IndividualChat= React.createClass({displayName: "IndividualChat",
   getInitialState: function() {
-    console.log(ProfileAnswersStore.getAnswers(this.props.params.userid, this.props.params.receiverid));
+    console.log(this.sortComments(MessageStore.getConvo(this.props.params.receiverid, this.props.params.userid)))
     return {
       messages: this.sortComments(MessageStore.getConvo(this.props.params.receiverid, this.props.params.userid)),
       user: UserStore.getUserById(this.props.params.userid),
       friend: UserStore.getUserById(this.props.params.receiverid),
       profileInfo: ProfileinfoStore.getProfileInfo(this.props.params.receiverid),
-      questions: {
-        question1: '',
-        question2: '',
-        question3: '',
-        question4: ''
-      },
+      question: ProfileAnswersStore.getQuestion(this.props.params.userid, this.props.params.receiverid),
+      renderChat: this.checkRender,
       smileysnake: false,
       quest: false,
       ninja: false,
@@ -55122,24 +55126,26 @@ var IndividualChat= React.createClass({displayName: "IndividualChat",
 formSubmitted: function(event) {
 
   event.preventDefault()
-  if (!this.state.questions.question1|| !this.state.questions.question2) {
-    return toastr.warning('text fields cannot be blank')
+  console.log('submitted');
+  if (!this.state.question) {
+    return toastr.warning('text field cannot be blank')
   }
   var answer = {
-    questions: this.state.questions,
-    user_answering_id: this.props.params.userid,
-    question_owner_id: this.props.params.receiverid
+    question: this.state.question,
+    asker_id: this.props.params.userid,
+    answerer_id: this.props.params.receiverid
   }
   ProfileAnswersActions.addAnswers(answer)
 
+  this.setState({chatRender: true})
   hashHistory.push(`/conversation/${this.props.params.receiverid}/${this.props.params.userid}`)
 
 },
 setQuestionChange: function(event) {
-  var field = event.target.name;
   var value = event.target.value;
-  this.state.questions[field] = value
-  return this.setState({profileInfo: this.state.profileInfo})
+  this.state.question = value
+  return this.setState({question: this.state.question})
+
 },
 
 componentWillMount: function() {
@@ -55194,6 +55200,7 @@ _onChange: function(comment) {
   }
 
   if(fullComment.message !== '' && fullComment.message !== undefined) {
+    console.log(fullComment.message);
   MessageAction.submitComment(fullComment)
 }
   MessageAction.commentSeen(fullComment.sender_id, fullComment.receiver_id)
@@ -55214,66 +55221,82 @@ toggleQuest: function() {
   this.setState({quest: !this.state.quest})
 },
 
-// <button className="calendarDisplay" onClick={this.toggleView}> Hello </button>
-// <ToggleDisplay show={this.state.display}>
-//   { this.state.display ? <CalendarForm/> : null }
-// </ToggleDisplay>
-// <embed className="calendar" base="http://external.kongregate-games.com/gamez/0021/0593/live/" src="http://external.kongregate-games.com/gamez/0021/0593/live/embeddable_210593.swf" type="application/x-shockwave-flash"></embed>
-// <embed className="calendar" base="http://external.kongregate-games.com/gamez/0021/4044/live/" src="http://external.kongregate-games.com/gamez/0021/4044/live/embeddable_214044.swf" type="application/x-shockwave-flash"></embed>
-// if(!ProfileAnswersStore.getAnswers(this.props.params.userid, this.props.params.receiverid).length) {
-//   return (
-//     <InitiateChat profile={this.state.profileInfo} onSave={this.formSubmitted} onType={this.setQuestionChange} userinfo={this.state.friend} />
-//   )
-// }
+checkRender: function() {
+  if (this.state.question == [] && this.state.messages == []) {
+    console.log('rendered from empty messages');
+      return this.setState({renderChat: false})
+  }
+  for (var i = 0; i < this.state.messages.length; i++) {
+          var iteration = this.state.messages[i]
+      if(iteration.sender_id == this.props.params.userid && iteration.seen == false) {
+        return this.setState({renderChat: true})
+      }
+    }
+  return this.setState({renderChat: false})
+},
+
+generateQuestion: function(event) {
+  event.preventDefault()
+ this.setState({question: Question.getRandomQuestion()})
+ console.log(this.state.question);
+},
 
   render: function() {
     userpic = this.state.user.profilepicture
     friendpic = this.state.friend.profilepicture
     userid = this.props.params.userid
-
-    if (this.state.messages) {
-        return ( React.createElement(InitiateChat, {profile: this.state.profileInfo, onSave: this.formSubmitted, onType: this.setQuestionChange, userinfo: this.state.friend}) )
-    }
-    for (var i = 0; i < this.state.messages.length; i++) {
-      console.log(iteration);
-      var iteration = this.state.messages[i]
-
-
-    if(iteration.sender_id == this.props.params.userid && iteration.seen == false) {
+      if(this.state.chatRender){
         return (
-          React.createElement(InitiateChat, {profile: this.state.profileInfo, onSave: this.formSubmitted, onType: this.setQuestionChange, userinfo: this.state.friend})
+          React.createElement("div", {className: "headerAndChat"}, 
+            React.createElement("div", {className: "headerTemplate"}, 
+              React.createElement("div", {className: "navButtons home"}, 
+                React.createElement("p", {onClick: this.toggleSmiley}, "SmileySnake")
+              ), 
+              React.createElement("div", {className: "navButtons chat"}, 
+                React.createElement("p", {onClick: this.toggleNinja}, "Ninja")
+              ), 
+              React.createElement("div", {className: "navButtons profile"}, 
+                React.createElement("p", {onClick: this.toggleQuest}, "Quest")
+              )
+            ), 
+
+            React.createElement("div", {className: "chatWrapper"}, 
+            React.createElement(ToggleDisplay, {show: this.state.smileysnake}, 
+               this.state.smileysnake ? React.createElement(SmileySnake, null) : null
+            ), 
+
+            React.createElement(ToggleDisplay, {show: this.state.ninja}, 
+               this.state.ninja ? React.createElement(NinjaGame, null) : null
+            ), 
+            React.createElement(ToggleDisplay, {show: this.state.quest}, 
+               this.state.quest ? React.createElement(QuestGame, null) : null
+            ), 
+
+
+            React.createElement("div", {className: "commentDisplay"}, 
+            React.createElement("p", {className: "question"}, this.state.question), 
+            React.createElement(CommentDisplay, {key: "derp", userprofilepicture: userpic, friendprofilepicture: friendpic, paramid: userid, 
+           messages: this.state.messages}), 
+            React.createElement(CommentForm, {onCommentSubmit: this._onChange})
+            )
+            )
+          )
         )
       }
+    else{
+      return (
+        React.createElement("div", {className: "fullQuestionPage"}, 
+        React.createElement(InitiateChat, {question: this.state.question, getQuestion: this.generateQuestion, onSave: this.formSubmitted, onType: this.setQuestionChange, userinfo: this.state.friend})
+        )
+      )
     }
-    return (
-      React.createElement("div", null, 
-      React.createElement("button", {onClick: this.toggleSmiley}, "SmileySnake"), 
-      React.createElement(ToggleDisplay, {show: this.state.smileysnake}, 
-         this.state.smileysnake ? React.createElement(SmileySnake, null) : null
-      ), 
-      React.createElement("button", {onClick: this.toggleNinja}, "Ninja"), 
-      React.createElement(ToggleDisplay, {show: this.state.ninja}, 
-         this.state.ninja ? React.createElement(NinjaGame, null) : null
-      ), 
-      React.createElement("button", {onClick: this.toggleQuest}, "Quest"), 
-      React.createElement(ToggleDisplay, {show: this.state.quest}, 
-         this.state.quest ? React.createElement(QuestGame, null) : null
-      ), 
 
-
-      React.createElement("div", {className: "commentDisplay"}, 
-      React.createElement(CommentDisplay, {key: "derp", userprofilepicture: userpic, friendprofilepicture: friendpic, paramid: userid, 
-     messages: this.state.messages}), 
-      React.createElement(CommentForm, {onCommentSubmit: this._onChange})
-      )
-      )
-    )
   }
 })
 
 module.exports = IndividualChat
 
-},{"../../actions/messageActions":226,"../../actions/profileAnswersActions":227,"../../stores/messageStore":253,"../../stores/profileAnswersStore":254,"../../stores/profileInfoStore":255,"../../stores/userStore":256,"./calendarForm":233,"./commentDisplay":235,"./commentform":236,"./initiateChat":239,"./ninjaGame":240,"./questGame":241,"./smileySnake":242,"react-router":85,"react-toggle-display":92}],239:[function(require,module,exports){
+},{"../../actions/messageActions":226,"../../actions/profileAnswersActions":227,"../../stores/messageStore":253,"../../stores/profileAnswersStore":254,"../../stores/profileInfoStore":255,"../../stores/questionStore":256,"../../stores/userStore":257,"./calendarForm":233,"./commentDisplay":235,"./commentform":236,"./initiateChat":239,"./ninjaGame":240,"./questGame":241,"./smileySnake":242,"react-router":85,"react-toggle-display":92}],239:[function(require,module,exports){
 var ChatEditFields = require('./chatEditFields')
 
 var InitiateChat = React.createClass({displayName: "InitiateChat",
@@ -55282,22 +55305,12 @@ var InitiateChat = React.createClass({displayName: "InitiateChat",
   return(
     React.createElement("div", null, 
     React.createElement("h1", null, " ", this.props.userinfo.firstname, " ", this.props.userinfo.lastname, " "), 
-    React.createElement("img", {src: this.props.userinfo.profilepicture}), 
-    React.createElement("form", null, 
+    React.createElement("img", {className: "profPic", src: this.props.userinfo.profilepicture}), 
+    React.createElement("form", {className: "questionForm"}, 
+    React.createElement("button", {className: "generateQuestionButton", onClick: this.props.getQuestion}, " Generate Question "), 
+      React.createElement(ChatEditFields, {name: "question", value: this.props.question, placeholder: "enter some text", onChange: this.props.onType}), 
 
-      React.createElement("p", null, " ", this.props.profile.question1), 
-      React.createElement(ChatEditFields, {name: "question1", placeholder: "Question 1", onChange: this.props.onType}), 
-
-      React.createElement("p", null, " ", this.props.profile.question2), 
-      React.createElement(ChatEditFields, {name: "question2", placeholder: "Question 2", onChange: this.props.onType}), 
-
-      React.createElement("p", null, " ", this.props.profile.question3), 
-      React.createElement(ChatEditFields, {name: "question3", placeholder: "Question 3", onChange: this.props.onType}), 
-
-      React.createElement("p", null, " ", this.props.profile.question4), 
-      React.createElement(ChatEditFields, {name: "question4", placeholder: "Question 4", onChange: this.props.onType}), 
-
-      React.createElement("input", {type: "submit", onClick: this.props.onSave, value: "Submit Answers"})
+      React.createElement("input", {className: "submitAnswers", type: "submit", onClick: this.props.onSave, value: "Submit Question"})
 
     )
 
@@ -55311,8 +55324,9 @@ module.exports = InitiateChat
 },{"./chatEditFields":234}],240:[function(require,module,exports){
 var NinjaGame = React.createClass({displayName: "NinjaGame",
   render: function() {
+
     return (
-      React.createElement("embed", {className: "calendar", base: "http://external.kongregate-games.com/gamez/0021/4044/live/", src: "http://external.kongregate-games.com/gamez/0021/4044/live/embeddable_214044.swf", type: "application/x-shockwave-flash"})
+      React.createElement("embed", {className: "calendar", base: "http://external.kongregate-games.com/gamez/0021/0593/live/", src: "http://external.kongregate-games.com/gamez/0021/0593/live/embeddable_210593.swf", type: "application/x-shockwave-flash"})
     )
   }
 })
@@ -55322,8 +55336,9 @@ module.exports = NinjaGame
 },{}],241:[function(require,module,exports){
 var QuestGame = React.createClass({displayName: "QuestGame",
   render: function() {
+
     return(
-      React.createElement("embed", {className: "calendar", base: "http://external.kongregate-games.com/gamez/0021/0593/live/", src: "http://external.kongregate-games.com/gamez/0021/0593/live/embeddable_210593.swf", type: "application/x-shockwave-flash"})
+      React.createElement("embed", {className: "calendar", base: "http://external.kongregate-games.com/gamez/0021/4044/live/", src: "http://external.kongregate-games.com/gamez/0021/4044/live/embeddable_214044.swf", type: "application/x-shockwave-flash"})
     )
   }
 })
@@ -55489,22 +55504,21 @@ var ProfileForm = React.createClass({displayName: "ProfileForm",
   },
 
   formSubmitted: function(event) {
+    event.preventDefault()
   toastr.options={
     'preventDuplicates': true,
     "positionClass": "toast-bottom-left"
   }
-  if (!this.state.profileInfo.question1|| !this.state.profileInfo.question2 || !this.state.profileInfo.Bio) {
+  if (!this.state.profileInfo.Bio) {
     return toastr.warning('text fields cannot be blank')
   }
-  event.preventDefault()
   profileInfoActions.saveInfo(this.state.profileInfo)
   hashHistory.push(`/profile/${this.state.profileInfo.fb_id}`)
-  // AuthorActions.createAuthor(this.state.author)
   toastr.success('Info Saved')
   },
   render: function() {
     return (
-    React.createElement("div", null, 
+    React.createElement("div", {className: "BioEdit"}, 
     React.createElement("h1", null, " ", this.state.user.firstname, " Profile "), 
     React.createElement(ProfileFormSection, {onChange: this.setQuestionChange, valued: this.state.profileInfo.Bio, onSave: this.formSubmitted, profileinfo: this.state.profileInfo})
 
@@ -55517,24 +55531,24 @@ var ProfileForm = React.createClass({displayName: "ProfileForm",
 
 module.exports = ProfileForm
 
-},{"../../actions/profileInfoActions":228,"../../stores/profileInfoStore":255,"../../stores/userStore":256,"./profileFormSection":246,"react-router":85,"toastr":223}],246:[function(require,module,exports){
+},{"../../actions/profileInfoActions":228,"../../stores/profileInfoStore":255,"../../stores/userStore":257,"./profileFormSection":246,"react-router":85,"toastr":223}],246:[function(require,module,exports){
 var ProfileEditFields = require('./ProfileEditFields')
 var ProfileFormSection = React.createClass({displayName: "ProfileFormSection",
 // var name;
 // var profile;
 // var onchange;
 // var value;
+// <ProfileEditFields name='question1' placeholder="Question 1" value={this.props.profileinfo.question1} onChange={this.props.onChange}/>
+// <ProfileEditFields name="question2" placeholder="Question 2" value={this.props.profileinfo.question2} onChange={this.props.onChange} />
+// <ProfileEditFields name="question3" placeholder="Question 3" value={this.props.profileinfo.question3} onChange={this.props.onChange}/>
+// <ProfileEditFields name="question4" placeholder="Question 4" value={this.props.profileinfo.question4} onChange={this.props.onChange}/>
 
   render: function() {
     return (
-      React.createElement("form", null, 
+      React.createElement("form", {className: "bioform"}, 
       React.createElement("label", {htmlFor: "Bio"}, " Bio "), 
       React.createElement("br", null), 
       React.createElement("textarea", {name: "Bio", value: this.props.profileinfo.Bio, onChange: this.props.onChange}, " "), 
-      "// ", React.createElement(ProfileEditFields, {name: "question1", placeholder: "Question 1", value: this.props.profileinfo.question1, onChange: this.props.onChange}), 
-      "// ", React.createElement(ProfileEditFields, {name: "question2", placeholder: "Question 2", value: this.props.profileinfo.question2, onChange: this.props.onChange}), 
-      "// ", React.createElement(ProfileEditFields, {name: "question3", placeholder: "Question 3", value: this.props.profileinfo.question3, onChange: this.props.onChange}), 
-      "// ", React.createElement(ProfileEditFields, {name: "question4", placeholder: "Question 4", value: this.props.profileinfo.question4, onChange: this.props.onChange}), 
       React.createElement("input", {type: "submit", onClick: this.props.onSave, className: "btn btn-default"})
       )
     )
@@ -55556,37 +55570,21 @@ var hashHistory = require('react-router').hashHistory
 var Profile = React.createClass({displayName: "Profile",
 
 getInitialState: function() {
-
-
     return {
       person: UserStore.getUserById(this.props.params.userid),
       otherUsers: {},
       profileInfo: ProfileinfoStore.getProfileInfo(this.props.params.userid)
     }
 
-    // UserActions.findUserById(this.props.params)
-    // {
-    // name: 'Josh',
-    // profilePicture: '',
-    // bio: ''
-    // }
   },
 
-  // checkifBio: function() {
-  //   if(!ProfileinfoStore.getProfileInfo(this.props.params.userid)) {
-  //     return hashHistory.push(`/profile/${this.props.params.userid}`)
-  //   }
-  //   else return;
-  // },
 componentWillMount: function() {
   UserStore.addChangeListener(this._onChange)
-  // this.setState({users: UserStore.getUserById(this.props.params.userid)})
-// console.log('hello there ' + this.state.users);
 },
+
 componentWillUnmount: function() {
   UserStore.removeChangeListener(this._onChange)
-  // this.setState({users: UserStore.getUserById(this.props.params.userid)})
-// console.log('hello there ' + this.state.users);
+
 },
 
 _onChange: function() {
@@ -55597,36 +55595,37 @@ _onChange: function() {
 },
 
 render: function() {
-  var usersID = this.state.person.fb_id
-  if(!ProfileinfoStore.getProfileInfo(this.props.params.userid)) {
+  if(this.state.person){
     return(
-      React.createElement("div", null, 
-      React.createElement("h1", null, "Welcome to the road Ahead ", this.state.person.firstname), 
-
-        React.createElement(Link, {to: `profile/edit/${this.state.person.fb_id}`}, " Create your profile! ")
+      React.createElement("div", {className: "profPage"}, 
+      React.createElement("div", {className: "headerTemplate"}, 
+        React.createElement("div", {className: "navButtons home"}, "home"), 
+        React.createElement("div", {className: "navButtons chat"}, "chat"), 
+        React.createElement("div", {className: "navButtons profile"}, "profile"), 
+        React.createElement("div", {className: "navButtons logout"}, "logout")
+      ), 
+      React.createElement("h1", {className: "welcomeMessage"}, "Welcome,", React.createElement("p", {className: "yourName"}, this.state.person.firstname)), 
+      React.createElement("div", {className: "profPic"}, 
+      React.createElement(UserInfo, {profilepicture: this.state.person.profilepicture, firstname: this.state.person.firstname, lastname: this.state.person.lastname, location: this.state.person.city, Bio: this.state.profileInfo.Bio})
+      ), 
+      React.createElement(Link, {className: "editLink", to: `profile/edit/${this.state.person.fb_id}`}, "edit profile"), 
+      React.createElement("br", null), 
+      React.createElement(Link, {className: "chatLink", to: `chat/all/${this.state.person.fb_id}`}, "chat with friends!")
       )
-
+    )
+  }else{
+    return(
+      React.createElement("div", null
+      )
     )
   }
-else {
-return(
-React.createElement("div", {className: "profPage"}, 
-  React.createElement("h1", {className: "welcomeMessage"}, "Welcome,", React.createElement("p", {className: "yourName"}, this.state.person.firstname)), 
-  React.createElement("div", {className: "profPic"}, React.createElement(UserInfo, {profilepicture: this.state.person.profilepicture, firstname: this.state.person.firstname, lastname: this.state.person.lastname, profinfo: this.state.profileInfo})
-  ), 
-  React.createElement(Link, {className: "editLink", to: `profile/edit/${this.state.person.fb_id}`}, "edit profile"), 
-  React.createElement("br", null), 
-  React.createElement(Link, {className: "chatLink", to: `chat/all/${this.state.person.fb_id}`}, "chat with friends!")
-)
-)
-}
 }
 
 });
 
 module.exports = Profile
 
-},{"../../actions/userActions":229,"../../stores/profileInfoStore":255,"../../stores/userStore":256,"./userinfo":248,"react-router":85}],248:[function(require,module,exports){
+},{"../../actions/userActions":229,"../../stores/profileInfoStore":255,"../../stores/userStore":257,"./userinfo":248,"react-router":85}],248:[function(require,module,exports){
 
 
 UserInfo = React.createClass({displayName: "UserInfo",
@@ -55634,22 +55633,11 @@ UserInfo = React.createClass({displayName: "UserInfo",
     return (
     React.createElement("div", {className: "infoDiv"}, 
       React.createElement("img", {src: this.props.profilepicture}), 
+      React.createElement("h5", null, " ", this.props.location, " "), 
       React.createElement("div", {className: "profInfoDiv"}, 
         React.createElement("h3", {className: "bio"}, "Bio"), 
-        React.createElement("p", null, " ", this.props.profinfo.Bio, " "), 
-        React.createElement("br", null), 
+        React.createElement("p", null, " ", this.props.Bio, " ")
 
-        React.createElement("h3", {className: "qOne"}, "Question 1"), 
-        React.createElement("p", null, " ", this.props.profinfo.question1, " "), 
-          React.createElement("br", null), 
-        React.createElement("h3", {className: "qTwo"}, "Question 2"), 
-        React.createElement("p", null, " ", this.props.profinfo.question2, " "), 
-          React.createElement("br", null), 
-        React.createElement("h3", {className: "qThree"}, "Question 3"), 
-        React.createElement("p", null, " ", this.props.profinfo.question3, " "), 
-          React.createElement("br", null), 
-        React.createElement("h3", {className: "qFour"}, "Question 4"), 
-        React.createElement("p", null, " ", this.props.profinfo.question4, " ")
       )
     )
   )
@@ -55691,9 +55679,9 @@ var Router = require('react-router').Router
 var Route = require('react-router').Route;
 var hashHistory = require('react-router').hashHistory
 var App = require('./components/app')
-var PageNotFound = require('./components/common/pagenotfound')  
+var PageNotFound = require('./components/common/pagenotfound')
 var Login = require('./components/login')
-var Profile = require('./components/profile/profilepage')
+var Profile = require('./components/profile/profilepage')   
 var ProfileForm = require('./components/profile/profileForm')
 var Chat = require('./components/conversation/alluserschat')
 var IndividualChat = require('./components/conversation/individualchat')
@@ -55771,7 +55759,14 @@ Dispatcher.register(function(action){
       MessageStore.emitChange()
       break;
     case ActionType.COMMENT_SEEN:
-      // Find all comments with sender id and receiver id and then change seen to true
+      for (var i = 0; i < _messages.length; i++) {
+        var iteration =_messages[i]
+        if(iteration.sender_id == action.recid && iteration.receiver_id == action.sendid){
+          iteration.seen = true
+          }
+        }
+          MessageStore.emitChange
+          break;
   }
 
 })
@@ -55805,11 +55800,11 @@ var ProfileAnswersStore = Assign({}, EventEmitter.prototype, {
     return _profileanswers;
   },
 
-  getAnswers: function(user_answer, question_owner) {
+  getQuestion: function(asker, answerer) {
     emptyArray = []
       for (var i = 0; i < _profileanswers.length; i++) {
         var iteration = _profileanswers[i]
-        if (iteration.user_answering_id == user_answer && iteration.question_owner_id == question_owner) {
+        if(iteration.asker_id == asker && iteration.answerer_id == answerer) {
           emptyArray.push(iteration)
         }
       }
@@ -55828,7 +55823,7 @@ Dispatcher.register(function(action){
       ProfileAnswersStore.emitChange()
       break;
     case ActionType.ADD_PROFILE_QUESTION_ANSWER:
-      _profileanswers.push(action.data)
+      _profileanswers.push(action.question)
       ProfileAnswersStore.emitChange()
       break;
   }
@@ -55892,6 +55887,34 @@ Dispatcher.register(function(action){
 module.exports = ProfileinfoStore;
 
 },{"../constants/actionTypes":249,"../dispatcher/appDispatcher":250,"events":4,"lodash":53,"object-assign":55}],256:[function(require,module,exports){
+var Question = {
+
+  getRandomQuestion: function() {
+    questionBank= [
+      'Would you rather have a head the size of a tennis ball or the size of a watermelon?',
+      'Would you rather peel all your nails out of your fingers or pull all the teeth out of your mouth?',
+      'Would you rather use eye drops made of vinegar or toilet paper made from sandpaper?',
+      'Would you rather have a large 10 inch long belly button that swayed to music or have accordions for legs?',
+      'Would you rather have a dragon or be a dragon?',
+      'Would you rather wear a snow suit in the desert or be naked in Antarctica?',
+      'if nothing sticks to teflon what makes th teflon stick to the pan?',
+      'Why doesn\'t Tarzan have a beard?',
+      'Do infants enjoy infancy as much as adults enjoy adultery?',
+      'Why did Yankee Doodle name the feather in his hat macaroni?',
+      'Would you rather never have access to the internet or Nicholas Cage alway be within 3 feet of you?'
+    ]
+    var random = Math.floor(Math.random() * 10)
+    return questionBank[questionBank.length-1]
+  }
+
+
+
+
+}
+
+module.exports= Question
+
+},{}],257:[function(require,module,exports){
 var Dispatcher = require('../dispatcher/appDispatcher')
 var ActionType = require('../constants/actionTypes')
 var EventEmitter = require('events').EventEmitter

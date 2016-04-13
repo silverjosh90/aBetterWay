@@ -103,7 +103,7 @@ var App = React.createClass({
 
 
     responseApi: function(authResponse){
-      FB.api('/me', { fields: ["picture.width(400).height(400)", 'first_name', 'last_name'] }, (me) => {
+      FB.api('/me', { fields: ["picture.width(400).height(400)", 'first_name', 'last_name', 'location'] }, (me) => {
         me.accessToken = authResponse.accessToken;
         this.responseFacebook(me);
       });
@@ -120,7 +120,7 @@ var App = React.createClass({
     },
 
     click: function(e){
-      FB.login(this.checkLoginState, { scope: 'public_profile, email'});
+      FB.login(this.checkLoginState, { scope: 'public_profile, email, user_location'});
     },
 
   render: function() {
@@ -133,11 +133,11 @@ var App = React.createClass({
           <div className="navButtons profile">profile</div>
           <div className="navButtons logout">logout</div>
         </div>
-        
+
         <div className="splashImg">
         <div className='logo'><i className="fa fa-map-o" aria-hidden="true"></i></div>
           <div className="blurBackground">
-            <h2 className="pageTitle">new kid in town</h2>
+            <h2 className="pageTitle">A Better Way</h2>
             <button className="fbLoginButton btn btn-primary" onClick={this.click}>facebook login</button>
           </div>
         </div>

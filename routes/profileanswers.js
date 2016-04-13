@@ -18,23 +18,21 @@ Api.route('/')
 
 Api.route('/answers')
   .post(function(req,res){
-
-    var body = req.body
-    var question1 = 'questions[question1]'
-    var question2 = 'questions[question2]'
-    var question3 = 'questions[question3]'
-    var question4 = 'questions[question4]'
-    answer= {
-    question1: body[question1],
-    question2: body[question2],
-    question3: body[question3],
-    question4: body[question4],
-    user_answering_id: req.body.user_answering_id,
-    question_owner_id: req.body.question_owner_id,
-  }
-    ProfileAnswers().insert(answer).returning('*').then(function(results){
-    console.log(results);
-    res.json(results)
+    ProfileAnswers().select().where({asker_id: req.body.asker_id, answerer_id: req.body.answerer_id}).then(function(results){
+      console.log(results);
+      if (!results.length) {
+        ProfileAnswers().insert(req.body).returning('*').then(function(data){
+          console.log('got here');
+          res.json(data)
+        })
+      }
+      else {
+        ProfileAnswers().select().update(req.body).returning('*').where({asker_id: req.body.asker_id, answerer_id: req.body.answerer_id}).then(function(result){
+          console.log('got to update');
+          console.log(result);
+          res.json(result)
+        })
+      }
   })
   })
 

@@ -1,5 +1,6 @@
 
 var MessageStore= require('../../stores/messageStore')
+var Question= require('../../stores/questionStore')
 var ProfileinfoStore= require('../../stores/profileInfoStore')
 var ProfileAnswersStore= require('../../stores/profileAnswersStore')
 var UserStore= require('../../stores/userStore')
@@ -20,18 +21,14 @@ var QuestGame = require('./questGame')
 
 var IndividualChat= React.createClass({
   getInitialState: function() {
-    console.log(ProfileAnswersStore.getAnswers(this.props.params.userid, this.props.params.receiverid));
+    console.log(this.sortComments(MessageStore.getConvo(this.props.params.receiverid, this.props.params.userid)))
     return {
       messages: this.sortComments(MessageStore.getConvo(this.props.params.receiverid, this.props.params.userid)),
       user: UserStore.getUserById(this.props.params.userid),
       friend: UserStore.getUserById(this.props.params.receiverid),
       profileInfo: ProfileinfoStore.getProfileInfo(this.props.params.receiverid),
-      questions: {
-        question1: '',
-        question2: '',
-        question3: '',
-        question4: ''
-      },
+      question: ProfileAnswersStore.getQuestion(this.props.params.userid, this.props.params.receiverid),
+      renderChat: this.checkRender,
       smileysnake: false,
       quest: false,
       ninja: false,
@@ -40,24 +37,26 @@ var IndividualChat= React.createClass({
 formSubmitted: function(event) {
 
   event.preventDefault()
-  if (!this.state.questions.question1|| !this.state.questions.question2) {
-    return toastr.warning('text fields cannot be blank')
+  console.log('submitted');
+  if (!this.state.question) {
+    return toastr.warning('text field cannot be blank')
   }
   var answer = {
-    questions: this.state.questions,
-    user_answering_id: this.props.params.userid,
-    question_owner_id: this.props.params.receiverid
+    question: this.state.question,
+    asker_id: this.props.params.userid,
+    answerer_id: this.props.params.receiverid
   }
   ProfileAnswersActions.addAnswers(answer)
 
+  this.setState({chatRender: true})
   hashHistory.push(`/conversation/${this.props.params.receiverid}/${this.props.params.userid}`)
 
 },
 setQuestionChange: function(event) {
-  var field = event.target.name;
   var value = event.target.value;
-  this.state.questions[field] = value
-  return this.setState({profileInfo: this.state.profileInfo})
+  this.state.question = value
+  return this.setState({question: this.state.question})
+
 },
 
 componentWillMount: function() {
@@ -112,6 +111,7 @@ _onChange: function(comment) {
   }
 
   if(fullComment.message !== '' && fullComment.message !== undefined) {
+    console.log(fullComment.message);
   MessageAction.submitComment(fullComment)
 }
   MessageAction.commentSeen(fullComment.sender_id, fullComment.receiver_id)
@@ -132,59 +132,76 @@ toggleQuest: function() {
   this.setState({quest: !this.state.quest})
 },
 
-// <button className="calendarDisplay" onClick={this.toggleView}> Hello </button>
-// <ToggleDisplay show={this.state.display}>
-//   { this.state.display ? <CalendarForm/> : null }
-// </ToggleDisplay>
-// <embed className="calendar" base="http://external.kongregate-games.com/gamez/0021/0593/live/" src="http://external.kongregate-games.com/gamez/0021/0593/live/embeddable_210593.swf" type="application/x-shockwave-flash"></embed>
-// <embed className="calendar" base="http://external.kongregate-games.com/gamez/0021/4044/live/" src="http://external.kongregate-games.com/gamez/0021/4044/live/embeddable_214044.swf" type="application/x-shockwave-flash"></embed>
-// if(!ProfileAnswersStore.getAnswers(this.props.params.userid, this.props.params.receiverid).length) {
-//   return (
-//     <InitiateChat profile={this.state.profileInfo} onSave={this.formSubmitted} onType={this.setQuestionChange} userinfo={this.state.friend} />
-//   )
-// }
+checkRender: function() {
+  if (this.state.question == [] && this.state.messages == []) {
+    console.log('rendered from empty messages');
+      return this.setState({renderChat: false})
+  }
+  for (var i = 0; i < this.state.messages.length; i++) {
+          var iteration = this.state.messages[i]
+      if(iteration.sender_id == this.props.params.userid && iteration.seen == false) {
+        return this.setState({renderChat: true})
+      }
+    }
+  return this.setState({renderChat: false})
+},
+
+generateQuestion: function(event) {
+  event.preventDefault()
+ this.setState({question: Question.getRandomQuestion()})
+ console.log(this.state.question);
+},
 
   render: function() {
     userpic = this.state.user.profilepicture
     friendpic = this.state.friend.profilepicture
     userid = this.props.params.userid
-
-    if (this.state.messages) {
-        return ( <InitiateChat profile={this.state.profileInfo} onSave={this.formSubmitted} onType={this.setQuestionChange} userinfo={this.state.friend} /> )
-    }
-    for (var i = 0; i < this.state.messages.length; i++) {
-\      var iteration = this.state.messages[i]
-
-
-    if(iteration.sender_id == this.props.params.userid && iteration.seen == false) {
+      if(this.state.chatRender){
         return (
-          <InitiateChat profile={this.state.profileInfo} onSave={this.formSubmitted} onType={this.setQuestionChange} userinfo={this.state.friend} />
+          <div className='headerAndChat'>
+            <div className="headerTemplate">
+              <div className="navButtons home">
+                <p onClick={this.toggleSmiley}>SmileySnake</p>
+              </div>
+              <div className="navButtons chat">
+                <p onClick={this.toggleNinja}>Ninja</p>
+              </div>
+              <div className="navButtons profile">
+                <p onClick={this.toggleQuest}>Quest</p>
+              </div>
+            </div>
+
+            <div className="chatWrapper">
+            <ToggleDisplay show={this.state.smileysnake}>
+              { this.state.smileysnake ? <SmileySnake /> : null }
+            </ToggleDisplay>
+
+            <ToggleDisplay show={this.state.ninja}>
+              { this.state.ninja ? <NinjaGame /> : null }
+            </ToggleDisplay>
+            <ToggleDisplay show={this.state.quest}>
+              { this.state.quest ? <QuestGame /> : null }
+            </ToggleDisplay>
+
+
+            <div className="commentDisplay">
+            <p className="question">{this.state.question}</p>
+            <CommentDisplay key='derp' userprofilepicture={userpic} friendprofilepicture={friendpic} paramid={userid}
+           messages={this.state.messages} />
+            <CommentForm onCommentSubmit={this._onChange} />
+            </div>
+            </div>
+          </div>
         )
       }
+    else{
+      return (
+        <div className="fullQuestionPage">
+        <InitiateChat question={this.state.question} getQuestion={this.generateQuestion} onSave={this.formSubmitted} onType={this.setQuestionChange} userinfo={this.state.friend} />
+        </div>
+      )
     }
-    return (
-      <div>
-      <button  onClick={this.toggleSmiley}>SmileySnake</button>
-      <ToggleDisplay show={this.state.smileysnake}>
-        { this.state.smileysnake ? <SmileySnake /> : null }
-      </ToggleDisplay>
-      <button  onClick={this.toggleNinja}>Ninja</button>
-      <ToggleDisplay show={this.state.ninja}>
-        { this.state.ninja ? <NinjaGame /> : null }
-      </ToggleDisplay>
-      <button  onClick={this.toggleQuest}>Quest</button>
-      <ToggleDisplay show={this.state.quest}>
-        { this.state.quest ? <QuestGame /> : null }
-      </ToggleDisplay>
 
-
-      <div className="commentDisplay">
-      <CommentDisplay key='derp' userprofilepicture={userpic} friendprofilepicture={friendpic} paramid={userid}
-     messages={this.state.messages} />
-      <CommentForm onCommentSubmit={this._onChange} />
-      </div>
-      </div>
-    )
   }
 })
 

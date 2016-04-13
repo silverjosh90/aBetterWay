@@ -8,37 +8,21 @@ var hashHistory = require('react-router').hashHistory
 var Profile = React.createClass({
 
 getInitialState: function() {
-
-
     return {
       person: UserStore.getUserById(this.props.params.userid),
       otherUsers: {},
       profileInfo: ProfileinfoStore.getProfileInfo(this.props.params.userid)
     }
 
-    // UserActions.findUserById(this.props.params)
-    // {
-    // name: 'Josh',
-    // profilePicture: '',
-    // bio: ''
-    // }
   },
 
-  // checkifBio: function() {
-  //   if(!ProfileinfoStore.getProfileInfo(this.props.params.userid)) {
-  //     return hashHistory.push(`/profile/${this.props.params.userid}`)
-  //   }
-  //   else return;
-  // },
 componentWillMount: function() {
   UserStore.addChangeListener(this._onChange)
-  // this.setState({users: UserStore.getUserById(this.props.params.userid)})
-// console.log('hello there ' + this.state.users);
 },
+
 componentWillUnmount: function() {
   UserStore.removeChangeListener(this._onChange)
-  // this.setState({users: UserStore.getUserById(this.props.params.userid)})
-// console.log('hello there ' + this.state.users);
+
 },
 
 _onChange: function() {
@@ -49,29 +33,30 @@ _onChange: function() {
 },
 
 render: function() {
-  var usersID = this.state.person.fb_id
-  if(!ProfileinfoStore.getProfileInfo(this.props.params.userid)) {
+  if(this.state.person){
+    return(
+      <div className='profPage'>
+      <div className="headerTemplate">
+        <div className="navButtons home">home</div>
+        <div className="navButtons chat">chat</div>
+        <div className="navButtons profile">profile</div>
+        <div className="navButtons logout">logout</div>
+      </div>
+      <h1 className='welcomeMessage'>Welcome,<p className='yourName'>{this.state.person.firstname}</p></h1>
+      <div className='profPic'>
+      <UserInfo profilepicture={this.state.person.profilepicture} firstname={this.state.person.firstname} lastname={this.state.person.lastname} location={this.state.person.city} Bio={this.state.profileInfo.Bio} />
+      </div>
+      <Link className='editLink' to={`profile/edit/${this.state.person.fb_id}`}>edit profile</Link>
+      <br />
+      <Link className='chatLink' to={`chat/all/${this.state.person.fb_id}`}>chat with friends!</Link>
+      </div>
+    )
+  }else{
     return(
       <div>
-      <h1>Welcome to the road Ahead {this.state.person.firstname}</h1>
-
-        <Link to={`profile/edit/${this.state.person.fb_id}`}> Create your profile! </Link>
       </div>
-
     )
   }
-else {
-return(
-<div className='profPage'>
-  <h1 className='welcomeMessage'>Welcome,<p className='yourName'>{this.state.person.firstname}</p></h1>
-  <div className='profPic'><UserInfo profilepicture={this.state.person.profilepicture} firstname={this.state.person.firstname} lastname={this.state.person.lastname} profinfo={this.state.profileInfo} />
-  </div>
-  <Link className='editLink' to={`profile/edit/${this.state.person.fb_id}`}>edit profile</Link>
-  <br />
-  <Link className='chatLink' to={`chat/all/${this.state.person.fb_id}`}>chat with friends!</Link>
-</div>
-)
-}
 }
 
 });

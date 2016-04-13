@@ -18,12 +18,15 @@ Api.route('/')
 Api.route('/create')
   .post(function(req, res, next) {
     var picture = 'picture[data][url]'
+    var locationed = 'location[name]'
     var reqbody = req.body
+    console.log(req.body);
     var newUser = {
       firstname: req.body.first_name,
       lastname: req.body.last_name,
       fb_id: req.body.id,
-      profilepicture: reqbody[picture]
+      profilepicture: reqbody[picture],
+
     };
 
     Users().select().where({fb_id: req.body.id}).first().then(function(results){

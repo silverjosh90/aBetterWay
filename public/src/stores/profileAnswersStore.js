@@ -23,11 +23,11 @@ var ProfileAnswersStore = Assign({}, EventEmitter.prototype, {
     return _profileanswers;
   },
 
-  getAnswers: function(user_answer, question_owner) {
+  getQuestion: function(asker, answerer) {
     emptyArray = []
       for (var i = 0; i < _profileanswers.length; i++) {
         var iteration = _profileanswers[i]
-        if (iteration.user_answering_id == user_answer && iteration.question_owner_id == question_owner) {
+        if(iteration.asker_id == asker && iteration.answerer_id == answerer) {
           emptyArray.push(iteration)
         }
       }
@@ -46,7 +46,7 @@ Dispatcher.register(function(action){
       ProfileAnswersStore.emitChange()
       break;
     case ActionType.ADD_PROFILE_QUESTION_ANSWER:
-      _profileanswers.push(action.data)
+      _profileanswers.push(action.question)
       ProfileAnswersStore.emitChange()
       break;
   }

@@ -36,10 +36,6 @@ Api.route('/create')
       if(results == undefined){
         var profileinfo = {
           fb_id: req.body.fb_id,
-          question1: '',
-          question2: '',
-          question3: '',
-          question4: '',
           Bio: ''
         }
         Profileinfo().insert(profileinfo).returning('*').then(function(rest){
