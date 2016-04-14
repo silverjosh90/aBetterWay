@@ -33,7 +33,7 @@ _onChange: function() {
 },
 
 render: function() {
-  if(this.state.person){
+  if(this.state.person && this.state.profileInfo){
     return(
       <div className='profPage'>
       <div className="headerTemplate">

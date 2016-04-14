@@ -55595,7 +55595,7 @@ _onChange: function() {
 },
 
 render: function() {
-  if(this.state.person){
+  if(this.state.person && this.state.profileInfo){
     return(
       React.createElement("div", {className: "profPage"}, 
       React.createElement("div", {className: "headerTemplate"}, 
